@@ -1,0 +1,120 @@
+"use client";
+
+import React, { useState } from 'react';
+import Link from 'next/link';
+import BottomNav from '@/app/components/BottomNav';
+
+// --- SVG Icons ---
+const ArrowLeftIcon = ({ className }: { className?: string }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+);
+const ShareIcon = ({ className }: { className?: string }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
+);
+const StarIcon = ({ className, filled }: { className?: string; filled: boolean }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+);
+const PlusIcon = ({ className }: { className?: string }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+);
+const MinusIcon = ({ className }: { className?: string }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+);
+const HeartIcon = ({ className }: { className?: string }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+);
+
+
+export default function ProductPage() {
+  const [quantity, setQuantity] = useState(3);
+  const [activeTab, setActiveTab] = useState('Description');
+  const pricePerItem = 4.9;
+
+  const handleQuantityChange = (amount: number) => {
+    setQuantity(prev => Math.max(1, prev + amount));
+  };
+
+  const totalPrice = (quantity * pricePerItem).toFixed(2);
+
+  return (
+    <div className="bg-gray-100 min-h-screen font-sans">
+      <div className="w-full max-w-md mx-auto bg-white flex flex-col h-screen">
+        
+        {/* Header with back and share */}
+        <header className="absolute top-0 left-0 right-0 z-10 flex justify-between items-center p-4">
+            <Link href="/" className="bg-white/50 p-2 rounded-full backdrop-blur-sm">
+                <ArrowLeftIcon className="w-6 h-6 text-gray-800" />
+            </Link>
+            <button className="bg-white/50 p-2 rounded-full backdrop-blur-sm">
+                <ShareIcon className="w-6 h-6 text-gray-800" />
+            </button>
+        </header>
+
+        {/* Image Carousel */}
+        <div className="h-2/5 w-full bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1528825871115-3581a5387919?q=80&w=2070&auto=format&fit=crop')"}}>
+            {/* Dots for carousel */}
+            <div className="absolute bottom-[62%] left-1/2 -translate-x-1/2 flex space-x-2">
+                <span className="block w-2 h-2 bg-white/50 rounded-full"></span>
+                <span className="block w-4 h-2 bg-white rounded-full"></span>
+                <span className="block w-2 h-2 bg-white/50 rounded-full"></span>
+            </div>
+        </div>
+
+        {/* Product Info */}
+        <main className="flex-grow bg-gray-50 rounded-t-3xl -mt-6 p-6 z-20">
+            <p className="text-sm font-bold text-gray-500">FRUITS</p>
+            <h1 className="text-4xl font-bold text-gray-800 mt-1">Fresh Orange</h1>
+            
+            <div className="flex justify-between items-center mt-4">
+                <p className="text-3xl font-bold text-gray-800">${pricePerItem.toFixed(2)}</p>
+                <div className="flex items-center space-x-3 bg-white border border-gray-200 rounded-full px-3 py-1">
+                    <button onClick={() => handleQuantityChange(-1)}><MinusIcon className="w-5 h-5 text-gray-600"/></button>
+                    <span className="text-xl font-bold">{quantity}</span>
+                    <button onClick={() => handleQuantityChange(1)}><PlusIcon className="w-5 h-5 text-gray-600"/></button>
+                </div>
+            </div>
+
+            <div className="flex items-center space-x-2 mt-4 text-gray-600">
+                <StarIcon className="w-5 h-5 text-yellow-400" filled={true}/>
+                <span className="font-bold">4.5</span>
+                <span className="text-sm">(128 reviews)</span>
+                <div className="flex -space-x-2 ml-4">
+                    <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://i.pravatar.cc/150?img=1" alt="Reviewer 1"/>
+                    <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://i.pravatar.cc/150?img=2" alt="Reviewer 2"/>
+                    <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://i.pravatar.cc/150?img=3" alt="Reviewer 3"/>
+                </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="mt-6 border-b border-gray-200">
+                <nav className="-mb-px flex space-x-6">
+                    <button onClick={() => setActiveTab('Description')} className={`py-3 px-1 border-b-2 font-semibold ${activeTab === 'Description' ? 'border-orange-500 text-orange-500' : 'border-transparent text-gray-500'}`}>Description</button>
+                    <button onClick={() => setActiveTab('Review')} className={`py-3 px-1 border-b-2 font-semibold ${activeTab === 'Review' ? 'border-orange-500 text-orange-500' : 'border-transparent text-gray-500'}`}>Review</button>
+                    <button onClick={() => setActiveTab('Discussion')} className={`py-3 px-1 border-b-2 font-semibold ${activeTab === 'Discussion' ? 'border-orange-500 text-orange-500' : 'border-transparent text-gray-500'}`}>Discussion</button>
+                </nav>
+            </div>
+            
+            <div className="mt-4 text-gray-600">
+                {activeTab === 'Description' && <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>}
+                {activeTab === 'Review' && <p>Reviews will be shown here.</p>}
+                {activeTab === 'Discussion' && <p>Discussion content will appear here.</p>}
+            </div>
+
+        </main>
+        
+        {/* Footer with actions */}
+        <footer className="bg-white p-4 flex items-center space-x-4 border-t sticky bottom-0">
+            <button className="p-4 bg-green-100 rounded-full">
+                <HeartIcon className="w-6 h-6 text-green-500"/>
+            </button>
+            <button className="flex-grow bg-yellow-400 text-gray-800 font-bold py-4 rounded-full text-center">
+                ADD TO CART - ${totalPrice}
+            </button>
+        </footer>
+        
+        {/* This seems to be part of the design, but let's use our existing BottomNav for consistency */}
+        {/* <BottomNav /> */}
+      </div>
+    </div>
+  );
+}
