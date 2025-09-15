@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { products as allProducts } from '@/app/data/mockData';
 import BottomNav from '@/app/components/BottomNav';
 
 // --- SVG Icons ---
@@ -25,10 +27,23 @@ const HeartIcon = ({ className }: { className?: string }) => (
 );
 
 
-export default function ProductPage() {
-  const [quantity, setQuantity] = useState(3);
+// Destructure id directly from params in the function signature
+export default function ProductPage({ params: { id } }: { params: { id: string } }) {
+  
+  const product = allProducts.find(p => p.name.toLowerCase().replace(/\s+/g, '-') === id);
+
+  const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('Description');
-  const pricePerItem = 4.9;
+
+  if (!product) {
+    return (
+        <div className="flex items-center justify-center h-screen">
+            <h1 className="text-2xl font-bold">Product not found</h1>
+        </div>
+    );
+  }
+  
+  const pricePerItem = parseFloat(product.price.replace('$', ''));
 
   const handleQuantityChange = (amount: number) => {
     setQuantity(prev => Math.max(1, prev + amount));
@@ -40,9 +55,8 @@ export default function ProductPage() {
     <div className="bg-gray-100 min-h-screen font-sans">
       <div className="w-full max-w-md mx-auto bg-white flex flex-col h-screen">
         
-        {/* Header with back and share */}
         <header className="absolute top-0 left-0 right-0 z-10 flex justify-between items-center p-4">
-            <Link href="/" className="bg-white/50 p-2 rounded-full backdrop-blur-sm">
+            <Link href={`/categories/${product.category}`} className="bg-white/50 p-2 rounded-full backdrop-blur-sm">
                 <ArrowLeftIcon className="w-6 h-6 text-gray-800" />
             </Link>
             <button className="bg-white/50 p-2 rounded-full backdrop-blur-sm">
@@ -50,20 +64,13 @@ export default function ProductPage() {
             </button>
         </header>
 
-        {/* Image Carousel */}
-        <div className="h-2/5 w-full bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1528825871115-3581a5387919?q=80&w=2070&auto=format&fit=crop')"}}>
-            {/* Dots for carousel */}
-            <div className="absolute bottom-[62%] left-1/2 -translate-x-1/2 flex space-x-2">
-                <span className="block w-2 h-2 bg-white/50 rounded-full"></span>
-                <span className="block w-4 h-2 bg-white rounded-full"></span>
-                <span className="block w-2 h-2 bg-white/50 rounded-full"></span>
-            </div>
+        <div className="h-2/5 w-full relative">
+          <Image src={product.image} alt={product.name} fill className="object-cover" />
         </div>
 
-        {/* Product Info */}
         <main className="flex-grow bg-gray-50 rounded-t-3xl -mt-6 p-6 z-20">
-            <p className="text-sm font-bold text-gray-500">FRUITS</p>
-            <h1 className="text-4xl font-bold text-gray-800 mt-1">Fresh Orange</h1>
+            <p className="text-sm font-bold text-gray-500">{product.category.toUpperCase()}</p>
+            <h1 className="text-4xl font-bold text-gray-800 mt-1">{product.name}</h1>
             
             <div className="flex justify-between items-center mt-4">
                 <p className="text-3xl font-bold text-gray-800">${pricePerItem.toFixed(2)}</p>
@@ -85,7 +92,6 @@ export default function ProductPage() {
                 </div>
             </div>
 
-            {/* Tabs */}
             <div className="mt-6 border-b border-gray-200">
                 <nav className="-mb-px flex space-x-6">
                     <button onClick={() => setActiveTab('Description')} className={`py-3 px-1 border-b-2 font-semibold ${activeTab === 'Description' ? 'border-orange-500 text-orange-500' : 'border-transparent text-gray-500'}`}>Description</button>
@@ -95,14 +101,13 @@ export default function ProductPage() {
             </div>
             
             <div className="mt-4 text-gray-600">
-                {activeTab === 'Description' && <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>}
+                {activeTab === 'Description' && <p>A delicious and fresh {product.name.toLowerCase()}, perfect for a healthy lifestyle. Enjoy the rich flavors and nutrients packed in this high-quality product.</p>}
                 {activeTab === 'Review' && <p>Reviews will be shown here.</p>}
                 {activeTab === 'Discussion' && <p>Discussion content will appear here.</p>}
             </div>
 
         </main>
         
-        {/* Footer with actions */}
         <footer className="bg-white p-4 flex items-center space-x-4 border-t sticky bottom-0">
             <button className="p-4 bg-green-100 rounded-full">
                 <HeartIcon className="w-6 h-6 text-green-500"/>
@@ -111,10 +116,8 @@ export default function ProductPage() {
                 ADD TO CART - ${totalPrice}
             </button>
         </footer>
-        
-        {/* This seems to be part of the design, but let's use our existing BottomNav for consistency */}
-        {/* <BottomNav /> */}
       </div>
     </div>
   );
 }
+

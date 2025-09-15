@@ -1,0 +1,1 @@
+                    <img src="/assests/images/CARD1.jpeg" alt="Silver Credit Card" className="rounded-lg"/>

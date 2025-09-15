@@ -1,16 +1,45 @@
-import { ChiliIcon, MushroomSmallIcon, MilkIcon, CakeIcon } from "@/app/components/Icons";
+// Import new icons directly from the react-icons library
+import { GiFruitBowl, GiTomato, GiMushroomGills, GiBreadSlice, GiWheat, GiCupcake } from "react-icons/gi";
+// CORRECTED: Replaced GiEgg with LuEgg
+import { LuMilk, LuEgg } from "react-icons/lu";
 
-export const categories = [
-    { name: 'Spicy', icon: ChiliIcon },
-    { name: 'Mushroom', icon: MushroomSmallIcon },
-    { name: 'Dairy', icon: MilkIcon },
-    { name: 'Sweets', icon: CakeIcon },
+// A more detailed list of all categories using the new icons
+export const allCategories = [
+  { name: 'Fruits', slug: 'fruits', count: 5, icon: GiFruitBowl },
+  { name: 'Vegetables', slug: 'vegetables', count: 4, icon: GiTomato },
+  { name: 'Dairy', slug: 'dairy', count: 2, icon: LuMilk },
+  { name: 'Bakery', slug: 'bakery', count: 2, icon: GiBreadSlice },
+  { name: 'Grains', slug: 'grains', count: 1, icon: GiWheat },
+  // CORRECTED: Using LuEgg for Proteins
+  { name: 'Proteins', slug: 'proteins', count: 2, icon: LuEgg },
+  { name: 'Mushrooms', slug: 'mushrooms', count: 1, icon: GiMushroomGills },
+  { name: 'Sweets', slug: 'sweets', count: 1, icon: GiCupcake },
 ];
 
-export const trendingDeals = [
-  { name: 'Avocado', price: '$6.7', image: 'https://images.unsplash.com/photo-1522120682888-25f03a618f6c?q=80&w=800&auto=format&fit=crop', liked: true },
-  { name: 'Broccoli', price: '$8.7', image: 'https://images.unsplash.com/photo-1587351177733-a0399539a3f3?q=80&w=800&auto=format&fit=crop', liked: false },
-  { name: 'Tomatoes', price: '$4.9', image: 'https://images.unsplash.com/photo-1591465223381-8b1b0a88a834?q=80&w=800&auto=format&fit=crop', liked: false },
-  { name: 'Grapes', price: '$7.2', image: 'https://images.unsplash.com/photo-1596395319888-297d22b2a1a8?q=80&w=800&auto=format&fit=crop', liked: false },
+// This is now our main product database. Each product has a category slug.
+export const products = [
+  // Fruits
+  { id: 1, name: 'Avocado', price: '$6.70', image: '/assests/images/Avocado.jpeg', liked: true, category: 'fruits' },
+  { id: 2, name: 'Grapes', price: '$7.20', image: '/assests/images/Grapes.jpeg', liked: false, category: 'fruits' },
+  { id: 3, name: 'Orange', price: '$4.90', image: '/assests/images/Orange.jpeg', liked: false, category: 'fruits' },
+  { id: 4, name: 'Banana', price: '$3.50', image: '/assests/images/Banana.jpeg', liked: false, category: 'fruits' },
+  { id: 5, name: 'Blueberry', price: '$8.70', image: '/assests/images/Blueberry.jpeg', liked: false, category: 'fruits' },
+  
+  // Vegetables
+  { id: 6, name: 'Broccoli', price: '$8.70', image: '/assests/images/Broccoli.jpeg', liked: false, category: 'vegetables' },
+  { id: 7, name: 'Tomatoes', price: '$4.90', image: '/assests/images/Tomatoes.jpeg', liked: false, category: 'vegetables' },
+  { id: 8, name: 'Cucumber', price: '$2.30', image: '/assests/images/Cucumber.jpeg', liked: false, category: 'vegetables' },
+  { id: 9, name: 'Bell Pepper', price: '$3.10', image: '/assests/images/Bell Pepper.jpeg', liked: false, category: 'vegetables' },
+  
+  // Dairy
+  { id: 10, name: 'Milk', price: '$5.50', image: '/assests/images/Milk.jpeg', liked: false, category: 'dairy' },
+  { id: 11, name: 'Cheese', price: '$12.00', image: '/assests/images/Cheese.jpeg', liked: false, category: 'dairy' },
+  
+  // Bakery
+  { id: 12, name: 'Bread Loaf', price: '$6.20', image: '/assests/images/Bread Loaf.jpeg', liked: false, category: 'bakery' },
+  { id: 13, name: 'Croissant', price: '$3.80', image: '/assests/images/Croissant.jpeg', liked: false, category: 'bakery' },
 ];
+
+export const trendingDeals = products.slice(0, 4);
+export const categories = allCategories.slice(0, 4);
 
