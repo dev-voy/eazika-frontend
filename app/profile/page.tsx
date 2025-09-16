@@ -3,74 +3,125 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import BottomNav from '@/app/components/BottomNav';
-import { IoChatbubbleEllipsesOutline, IoStarOutline, IoShareOutline } from "react-icons/io5";
-
-// --- SVG Icons ---
-const ArrowRightIcon = ({ className }: { className?: string }) => (
-  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="12 5 19 12 12 19"></polyline></svg>
-);
+import MainLayout from '@/app/components/MainLayout';
+import { motion } from 'framer-motion';
+import { 
+    User, 
+    MapPin, 
+    CreditCard, 
+    ShoppingBag, 
+    Heart, 
+    Settings, 
+    HelpCircle, 
+    LogOut,
+    ChevronRight,
+    Edit
+} from 'lucide-react';
 
 // Reusable component for menu items
-const ProfileMenuItem = ({ title, subtitle, href, children }: { title: string, subtitle?: string, href: string, children?: React.ReactNode }) => (
-    <Link href={href} className="flex items-center justify-between py-4 group">
-        <div className="flex items-center gap-4">
-            {children}
-            <div>
-                <h3 className="font-semibold text-gray-800 text-lg">{title}</h3>
-                {subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}
-            </div>
+const ProfileMenuItem = ({ href, icon: Icon, label }: { href: string, icon: React.ElementType, label: string }) => (
+    <Link href={href} className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors group">
+        <div className="flex items-center space-x-4">
+            <Icon className="h-6 w-6 text-gray-500 group-hover:text-orange-500" />
+            <span className="font-semibold text-gray-800">{label}</span>
         </div>
-        <ArrowRightIcon className="w-6 h-6 text-gray-400 group-hover:text-gray-800 transition-colors" />
+        <ChevronRight className="h-5 w-5 text-gray-400" />
     </Link>
 );
 
 
 export default function ProfilePage() {
-  return (
-    <div className="bg-gray-50 min-h-screen font-sans">
-      <div className="w-full max-w-md mx-auto bg-gray-50 flex flex-col h-screen">
-        
-        <header className="px-6 pt-10 pb-6">
-            <div className="w-12 h-12 rounded-full overflow-hidden mb-4">
-                <Image src="/assests/images/profile-pic.jpeg" alt="User Avatar" width={48} height={48} className="object-cover"/>
-            </div>
-            <h1 className="text-4xl font-bold text-gray-800">Account</h1>
-        </header>
+    // Mock user data - in a real app, this would come from your useAuth() hook
+    const user = {
+        name: 'Rafatul Islam',
+        email: 'rafatul@eazika.com',
+        avatar: '/assests/images/profile-pic.jpeg'
+    };
 
-        <main className="flex-grow overflow-y-auto px-6">
+    const menuItems = [
+        { icon: ShoppingBag, label: 'My Orders', href: '#' },
+        { icon: Heart, label: 'Wishlist', href: '/favorites' },
+        { icon: MapPin, label: 'Delivery Addresses', href: '#' },
+        { icon: CreditCard, label: 'Payment Methods', href: '#' },
+    ];
+
+    const supportItems = [
+        { icon: HelpCircle, label: 'Help & Support', href: '#' },
+        { icon: Settings, label: 'Settings', href: '#' },
+    ];
+
+  return (
+    <MainLayout>
+      <div className="w-full max-w-5xl mx-auto bg-gray-50 min-h-screen">
+        
+        <main className="flex-grow overflow-y-auto p-4 md:p-6 space-y-6">
+            {/* User Profile Header */}
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl p-6 text-white shadow-lg"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-16 h-16 rounded-full relative overflow-hidden border-2 border-white/50">
+                     <Image src={user.avatar} alt="User Avatar" fill className="object-cover"/>
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-bold">{user.name}</h1>
+                    <p className="text-yellow-100">{user.email}</p>
+                  </div>
+                </div>
+                <button className="p-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors">
+                  <Edit className="h-5 w-5" />
+                </button>
+              </div>
+            </motion.div>
+
             {/* Account Section */}
-            <div className="bg-white rounded-2xl shadow-sm divide-y divide-gray-100 mb-8 p-2">
-                <ProfileMenuItem title="Manage Account" subtitle="Update information and manage your account" href="#" />
-                <ProfileMenuItem title="Payment" subtitle="Manage payment methods and credits" href="#" />
-                <ProfileMenuItem title="Address" subtitle="Add or remove a delivery address" href="#" />
-                <ProfileMenuItem title="Notifications" subtitle="Manage delivery and promotional notifications" href="#" />
-            </div>
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-white rounded-2xl shadow-sm border border-gray-100"
+            >
+              <div className="divide-y divide-gray-100">
+                {menuItems.map((item) => (
+                  <ProfileMenuItem key={item.label} {...item} />
+                ))}
+              </div>
+            </motion.div>
 
             {/* Support Section */}
-            <h2 className="text-xl font-bold text-gray-800 mb-2">Support</h2>
-             <div className="bg-white rounded-2xl shadow-sm divide-y divide-gray-100 mb-8 p-2">
-                <ProfileMenuItem title="Get Help" href="#">
-                    <IoChatbubbleEllipsesOutline className="w-6 h-6 text-gray-500" />
-                </ProfileMenuItem>
-                <ProfileMenuItem title="Rate App" href="#">
-                    <IoStarOutline className="w-6 h-6 text-gray-500" />
-                </ProfileMenuItem>
-                <ProfileMenuItem title="Share App" href="#">
-                    <IoShareOutline className="w-6 h-6 text-gray-500" />
-                </ProfileMenuItem>
-            </div>
-            
-            {/* Log Out Button */}
-            <div className="py-4">
-                <button className="w-full bg-gray-200 text-gray-700 font-bold py-4 rounded-xl text-center hover:bg-gray-300 transition-colors">
-                    Log Out
-                </button>
-            </div>
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-white rounded-2xl shadow-sm border border-gray-100"
+            >
+              <div className="divide-y divide-gray-100">
+                {supportItems.map((item) => (
+                   <ProfileMenuItem key={item.label} {...item} />
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Logout */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <button
+                className="w-full flex items-center justify-center p-4 text-red-600 font-semibold bg-white rounded-2xl shadow-sm border border-gray-100 hover:bg-red-50 transition-colors"
+              >
+                <LogOut className="h-5 w-5 mr-2" />
+                Logout
+              </button>
+            </motion.div>
         </main>
-        
-        <BottomNav />
       </div>
-    </div>
+    </MainLayout>
   );
 }
+
