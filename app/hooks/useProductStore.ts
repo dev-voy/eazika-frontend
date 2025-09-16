@@ -6,42 +6,45 @@ import { products as initialProducts } from '@/app/data/mockData';
 // Define the Product type based on your data structure
 type Product = typeof initialProducts[0];
 
-// This logic gets the initial state, checking localStorage for saved likes
-const getInitialState = (): Product[] => {
-    // If we're on the server, return the default list
-    if (typeof window === 'undefined') {
-        return initialProducts;
-    }
-    try {
-        const storedLikes = localStorage.getItem('productLikes');
-        if (storedLikes) {
-            const likedIds = new Set(JSON.parse(storedLikes));
-            // Return a new list where the 'liked' status is updated from storage
-            return initialProducts.map(product => ({
-                ...product,
-                liked: likedIds.has(product.id),
-            }));
-        }
-    } catch (error) {
-        console.error("Failed to parse product likes from localStorage", error);
-    }
-    // Return the default list if nothing is in storage
-    return initialProducts;
-};
-
 // This is our custom hook that all pages will use
 export const useProductStore = () => {
-    const [products, setProducts] = useState<Product[]>(getInitialState);
+    // 1. Always start with the default state to ensure server and client match initially.
+    const [products, setProducts] = useState<Product[]>(initialProducts);
+    const [isInitialized, setIsInitialized] = useState(false);
 
-    // This effect runs whenever the 'products' state changes, saving the likes to localStorage
+    // 2. Use an effect to load from localStorage ONLY on the client, after the first render.
     useEffect(() => {
+        try {
+            const storedLikes = localStorage.getItem('productLikes');
+            if (storedLikes) {
+                const likedIds = new Set(JSON.parse(storedLikes));
+                setProducts(currentProducts => 
+                    currentProducts.map(product => ({
+                        ...product,
+                        liked: likedIds.has(product.id),
+                    }))
+                );
+            }
+        } catch (error) {
+            console.error("Failed to parse product likes from localStorage", error);
+        }
+        // Mark state as initialized from client-side storage
+        setIsInitialized(true);
+    }, []); // Empty dependency array means this runs only once on mount
+
+    // 3. Use a separate effect to save to localStorage whenever products change,
+    //    but only after the initial state has been loaded.
+    useEffect(() => {
+        if (!isInitialized) {
+            return; // Don't save to localStorage on the initial server render
+        }
         try {
             const likedIds = products.filter(p => p.liked).map(p => p.id);
             localStorage.setItem('productLikes', JSON.stringify(likedIds));
         } catch (error) {
             console.error("Failed to save product likes to localStorage", error);
         }
-    }, [products]);
+    }, [products, isInitialized]);
 
     // This is the function all components will call to toggle a like
     const handleLikeToggle = (productId: number) => {
@@ -54,3 +57,4 @@ export const useProductStore = () => {
 
     return { products, handleLikeToggle };
 };
+
