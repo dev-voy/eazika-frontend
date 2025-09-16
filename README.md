@@ -17,6 +17,7 @@
 ### Features of Eazika
 
 - **Instant Shopping**: Purchase any product in just 10 minutes.
+- **Extensive Catalog**: Access a wide variety of products across multiple categories.
 - **Wide Range of Products**: Browse through various categories including electronics, fashion, and everyday
   essentials.
 - **User-Friendly Interface**: Designed for speed and ease of use, ensuring a seamless shopping
