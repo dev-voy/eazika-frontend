@@ -1,8 +1,7 @@
 "use client";
 
 import React from 'react';
-import Image from 'next/image'; // Import the Next.js Image component
-import { HeartIcon } from '@/app/components/Icons'; // Corrected import path
+import { HeartIcon } from '@/app/components/Icons'; // Using full alias path to ensure resolution
 
 type ProductCardProps = {
   name: string;
@@ -15,18 +14,16 @@ type ProductCardProps = {
 const ProductCard = ({ name, price, image, liked, onLikeToggle }: ProductCardProps) => {
   return (
     <div className="rounded-2xl overflow-hidden shadow-sm relative aspect-[3/4] group">
-      {/* Replace the <img> tag with the Image component */}
-      <Image 
+      {/* Reverted to a standard img tag to resolve the build error */}
+      <img 
         src={image} 
         alt={name} 
-        fill
-        sizes="(max-width: 640px) 50vw, 33vw"
-        className="object-cover group-hover:scale-105 transition-transform duration-300" 
+        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
       />
       
       <button 
         onClick={onLikeToggle} 
-        className="absolute top-2 right-2 bg-white/50 p-1.5 rounded-full backdrop-blur-sm z-10 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        className="absolute top-2 right-2 bg-white/50 p-1.5 rounded-full backdrop-blur-sm z-10 focus:outline-none"
         aria-label={`Like ${name}`}
       >
         <HeartIcon className={liked ? 'text-red-500' : 'text-gray-700'} filled={liked} />

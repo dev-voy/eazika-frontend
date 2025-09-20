@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion'; // Import motion
+import { motion } from 'framer-motion';
 import MainLayout from '../components/MainLayout';
 import { allCategories } from '../data/mockData';
 
@@ -27,7 +27,7 @@ export default function CategoriesPage() {
     <MainLayout>
       <div className="w-full max-w-7xl mx-auto bg-gray-50 flex flex-col min-h-screen">
         <header className="px-4 md:px-6 py-4 flex items-center space-x-4 border-b bg-white sticky top-0 z-10">
-          <Link href="/" aria-label="Go back">
+          <Link href="/home" aria-label="Go back">
             <ArrowLeftIcon className="w-6 h-6 text-gray-800" />
           </Link>
           <h1 className="text-xl font-bold text-gray-800">All Categories</h1>

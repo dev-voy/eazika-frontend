@@ -1,21 +1,28 @@
+"use client";
+
 import React from 'react';
-import { BellIcon } from './Icons';
+import { BellIcon } from './Icons'; // Corrected import path
 
-const Header = () => {
-  return (
-    <header className="px-4 pt-6 pb-4">
-      <div className="flex justify-between items-center">
-        <div>
-          <p className="text-gray-500 text-sm">Good Morning</p>
-          <h1 className="text-2xl font-bold text-gray-800">Rafatul Islam</h1>
-        </div>
-        <div className="relative">
-          <BellIcon className="text-gray-600" />
-          <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
-        </div>
-      </div>
-    </header>
-  );
-};
+export default function Header() {
+    const user = {
+        name: 'Rafatul Islam',
+        avatar: '/assests/images/profile-pic.jpeg'
+    };
 
-export default Header;
+    return (
+        <header className="px-4 md:px-6 py-4 flex justify-between items-center bg-white sticky top-0 z-20 border-b">
+            <div>
+                <p className="text-sm text-gray-500">Good Morning</p>
+                <h1 className="text-xl font-bold text-gray-800">{user.name}</h1>
+            </div>
+            <div className="flex items-center gap-4">
+                {/* Replaced Link with a standard anchor tag */}
+                <a href="/notifications" className="relative p-2 rounded-full hover:bg-gray-100">
+                    <BellIcon className="w-6 h-6 text-gray-600" />
+                    <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                </a>
+            </div>
+        </header>
+    );
+}
+

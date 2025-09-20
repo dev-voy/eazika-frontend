@@ -15,8 +15,16 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      // ADDED: New hostname for placeholder images
+       {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
 
 export default nextConfig;
+
