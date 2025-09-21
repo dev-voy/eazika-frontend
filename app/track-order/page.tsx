@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Phone, MessageSquare, XCircle, X, Package, CheckCircle, Truck } from 'lucide-react';
+import { Phone, MessageSquare, XCircle, X, Package, CheckCircle, Truck } from 'lucide-react';
 
-// --- NEW Cancel Order Modal Component ---
-const CancelOrderModal = ({ onClose }: { onClose: () => void }) => {
+// --- Cancel Order Panel Component ---
+const CancelOrderPanel = ({ onClose }: { onClose: () => void }) => {
     const cancelReasons = [
         "I want to change my order",
         "The delivery is taking too long",
@@ -158,7 +158,8 @@ export default function TrackOrderPage() {
       </motion.div>
 
       <AnimatePresence>
-        {isCancelling && <CancelOrderModal onClose={() => setIsCancelling(false)} />}
+        {/* CORRECTED: Renamed to match the component definition */}
+        {isCancelling && <CancelOrderPanel onClose={() => setIsCancelling(false)} />}
       </AnimatePresence>
     </div>
   );

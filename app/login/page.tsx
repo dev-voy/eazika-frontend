@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image'; // Import the Next.js Image component
+import { Eye, EyeOff } from 'lucide-react'; // CORRECTED: Removed unused 'ShoppingBag' import
 import { motion } from 'framer-motion';
 
 export default function CustomerLoginPage() {
@@ -16,7 +17,8 @@ export default function CustomerLoginPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
         >
-          <img src="/icon0.svg" alt="Eazika Logo" className="w-16 h-16 mx-auto mb-4" />
+          {/* CORRECTED: Replaced <img> with the optimized Next.js <Image> component */}
+          <Image src="/icon0.svg" alt="Eazika Logo" width={64} height={64} className="mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-gray-900">Welcome to Eazika</h1>
           <h2 className="mt-6 text-xl font-medium text-gray-600">
             Sign in to your account

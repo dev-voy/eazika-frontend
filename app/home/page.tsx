@@ -8,7 +8,7 @@ import MainLayout from '@/app/components/MainLayout';
 import Header from '@/app/components/Header';
 import ProductCard from '@/app/components/ProductCard';
 import { ArrowRightIcon } from '@/app/components/Icons';
-import { categories, products as allProducts } from '@/app/data/mockData';
+import { categories } from '@/app/data/mockData'; // CORRECTED: Removed unused 'allProducts' import
 import { useProductStore } from '@/app/hooks/useProductStore';
 
 const SearchIcon = ({ className }: { className?: string }) => (
@@ -106,7 +106,6 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            {/* THIS IS THE CHANGE: Wrapped the header in a Link */}
             <Link href="/trending-deals" className="flex justify-between items-center mb-4 group">
               <h3 className="text-xl md:text-2xl font-bold text-gray-800">
                 {searchTerm ? 'Search Results' : 'Trending Deals'}
@@ -132,3 +131,4 @@ export default function HomePage() {
     </MainLayout>
   );
 }
+

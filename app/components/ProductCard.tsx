@@ -1,7 +1,8 @@
 "use client";
 
 import React from 'react';
-import { HeartIcon } from '@/app/components/Icons'; // Using full alias path to ensure resolution
+import Image from 'next/image'; // Import the Next.js Image component
+import { HeartIcon } from '@/app/components/Icons';
 
 type ProductCardProps = {
   name: string;
@@ -14,11 +15,13 @@ type ProductCardProps = {
 const ProductCard = ({ name, price, image, liked, onLikeToggle }: ProductCardProps) => {
   return (
     <div className="rounded-2xl overflow-hidden shadow-sm relative aspect-[3/4] group">
-      {/* Reverted to a standard img tag to resolve the build error */}
-      <img 
+      {/* UPDATED: Replaced <img> with the optimized Next.js <Image> component */}
+      <Image 
         src={image} 
         alt={name} 
-        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+        fill
+        sizes="(max-width: 640px) 50vw, 33vw"
+        className="object-cover group-hover:scale-105 transition-transform duration-300" 
       />
       
       <button 

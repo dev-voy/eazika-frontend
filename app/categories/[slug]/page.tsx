@@ -30,7 +30,8 @@ export default function SpecificCategoryPage() {
   const categoryName = categoryInfo ? categoryInfo.name : "Category";
 
   const searchedProducts = useMemo(() => {
-    let categoryProducts = products.filter(p => p.category === slug);
+    // CORRECTED: Changed 'let' to 'const'
+    const categoryProducts = products.filter(p => p.category === slug);
     if (!searchTerm) return categoryProducts;
     return categoryProducts.filter(p => 
       p.name.toLowerCase().includes(searchTerm.toLowerCase())

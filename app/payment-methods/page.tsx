@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import MainLayout from '@/app/components/MainLayout';
 import { ArrowLeftIcon } from '@/app/components/Icons';
-import { Trash2, CreditCard, Landmark } from 'lucide-react';
+import { Trash2, Landmark } from 'lucide-react'; // CORRECTED: Removed unused 'CreditCard' import
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
@@ -43,7 +43,6 @@ export default function PaymentMethodsPage() {
         setIsAdding(false);
     };
 
-    // NEW: Function to handle deleting a payment method
     const handleDeleteMethod = (idToDelete: number) => {
         setMethods(current => current.filter(method => method.id !== idToDelete));
     };
@@ -110,7 +109,6 @@ const PaymentMethodList = ({ methods, onDelete }: { methods: PaymentMethod[], on
                         {method.isDefault && <p className="text-xs text-gray-500">Default payment method</p>}
                     </div>
                 </div>
-                {/* UPDATED: Delete button is now functional */}
                 <button onClick={() => onDelete(method.id)} className="p-2 text-gray-500 hover:text-red-600 transition-colors">
                     <Trash2 className="w-5 h-5" />
                 </button>

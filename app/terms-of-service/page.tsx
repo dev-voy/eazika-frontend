@@ -21,7 +21,7 @@ export default function TermsOfServicePage() {
                         className="bg-white rounded-2xl shadow-sm p-6 md:p-8 border border-gray-100 prose prose-lg max-w-none"
                     >
                         <h2>1. Introduction</h2>
-                        <p>Welcome to Eazika! These Terms of Service ("Terms") govern your use of the Eazika mobile application and website (our "Service"), operated by Eazika Inc. By accessing or using our Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.</p>
+                        <p>Welcome to Eazika! These Terms of Service (&quot;Terms&quot;) govern your use of the Eazika mobile application and website (our &quot;Service&quot;), operated by Eazika Inc. By accessing or using our Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.</p>
                         
                         <h2>2. User Accounts</h2>
                         <p>When you create an account with us, you must provide us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service. You are responsible for safeguarding the password that you use to access the Service and for any activities or actions under your password.</p>
@@ -39,7 +39,7 @@ export default function TermsOfServicePage() {
                         <p>In no event shall Eazika, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.</p>
 
                         <h2>7. Changes to Terms</h2>
-                        <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.</p>
+                        <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will provide at least 30 days notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.</p>
 
                         <p className="mt-8 text-sm text-gray-500">Last updated: September 21, 2025</p>
                     </motion.div>

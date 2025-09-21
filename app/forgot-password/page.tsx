@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // Import the Image component
 import { motion } from 'framer-motion';
 import { Mail } from 'lucide-react';
 
@@ -13,12 +14,13 @@ export default function ForgotPasswordPage() {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                 >
-                    <img src="/icon0.svg" alt="Eazika Logo" className="w-16 h-16 mx-auto" />
+                    {/* UPDATED: Replaced <img> with the optimized Next.js <Image> component */}
+                    <Image src="/icon0.svg" alt="Eazika Logo" width={64} height={64} className="mx-auto" />
                     <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
                         Forgot Password?
                     </h2>
                     <p className="mt-2 text-center text-sm text-gray-600">
-                        No worries, we'll send you reset instructions.
+                        No worries, we&apos;ll send you reset instructions.
                     </p>
                 </motion.div>
 
@@ -60,3 +62,4 @@ export default function ForgotPasswordPage() {
         </div>
     );
 }
+
