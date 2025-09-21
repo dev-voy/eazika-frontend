@@ -49,7 +49,7 @@ export default function FavoritesPage() {
     <MainLayout>
       <div className="w-full max-w-7xl mx-auto bg-gray-50 min-h-screen">
         <header className="px-4 md:px-6 py-4 flex items-center space-x-4 border-b bg-white sticky top-0 z-10">
-          <Link href="/" aria-label="Go back">
+          <Link href="/home" aria-label="Go back">
             <ArrowLeftIcon className="w-6 h-6 text-gray-800" />
           </Link>
           <h1 className="text-2xl font-bold text-gray-800">My Wishlist</h1>

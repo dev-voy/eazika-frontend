@@ -15,7 +15,7 @@ const Sidebar = () => {
       <h2 className="text-3xl font-bold text-orange-500 mb-8">Eazika</h2>
       <div className="flex flex-col justify-between flex-1">
         <nav>
-          <Link href="/" className={`flex items-center px-4 py-2 rounded-md ${isActive('/') ? 'bg-orange-100 text-orange-600' : 'text-gray-600 hover:bg-gray-100'}`}>
+          <Link href="/home" className={`flex items-center px-4 py-2 rounded-md ${isActive('/') ? 'bg-orange-100 text-orange-600' : 'text-gray-600 hover:bg-gray-100'}`}>
             <HomeIcon className="w-6 h-6" />
             <span className="mx-4 font-medium">Home</span>
           </Link>

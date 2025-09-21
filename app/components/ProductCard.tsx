@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image'; // Import the Next.js Image component
-import { HeartIcon } from '@/app/components/Icons'; // Corrected import path
+import { HeartIcon } from '@/app/components/Icons';
 
 type ProductCardProps = {
   name: string;
@@ -15,7 +15,7 @@ type ProductCardProps = {
 const ProductCard = ({ name, price, image, liked, onLikeToggle }: ProductCardProps) => {
   return (
     <div className="rounded-2xl overflow-hidden shadow-sm relative aspect-[3/4] group">
-      {/* Replace the <img> tag with the Image component */}
+      {/* UPDATED: Replaced <img> with the optimized Next.js <Image> component */}
       <Image 
         src={image} 
         alt={name} 
@@ -26,7 +26,7 @@ const ProductCard = ({ name, price, image, liked, onLikeToggle }: ProductCardPro
       
       <button 
         onClick={onLikeToggle} 
-        className="absolute top-2 right-2 bg-white/50 p-1.5 rounded-full backdrop-blur-sm z-10 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        className="absolute top-2 right-2 bg-white/50 p-1.5 rounded-full backdrop-blur-sm z-10 focus:outline-none"
         aria-label={`Like ${name}`}
       >
         <HeartIcon className={liked ? 'text-red-500' : 'text-gray-700'} filled={liked} />

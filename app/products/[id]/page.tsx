@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useParams } from 'next/navigation'; // Import the useParams hook
-import { products as allProducts } from '@/app/data/mockData';
+import { useParams } from 'next/navigation';
+import { useProductStore } from '@/app/hooks/useProductStore'; // For liking
+import { useCartStore } from '@/app/hooks/useCartStore';   // For cart
 import MainLayout from '@/app/components/MainLayout';
+import { HeartIcon } from '@/app/components/Icons'; // Use the global icon for consistency
 
-// --- SVG Icons ---
+// --- Other SVG Icons ---
 const ArrowLeftIcon = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
 );
@@ -23,18 +25,18 @@ const PlusIcon = ({ className }: { className?: string }) => (
 const MinusIcon = ({ className }: { className?: string }) => (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
 );
-const HeartIcon = ({ className }: { className?: string }) => (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-);
 
-// REMOVED params from function signature
 export default function ProductPage() {
-  const params = useParams(); // Use the hook to get params
-  const id = params.id as string; // Get the id from the params object
+  const params = useParams();
+  const id = params.id as string;
 
-  const product = allProducts.find(p => p.name.toLowerCase().replace(/\s+/g, '-') === id);
+  const { products, handleLikeToggle } = useProductStore();
+  const { addToCart } = useCartStore();
+
+  const product = products.find(p => p.name.toLowerCase().replace(/\s+/g, '-') === id);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('Description');
+  const [isAdded, setIsAdded] = useState(false); // For button feedback
 
   if (!product) {
     return (
@@ -48,9 +50,16 @@ export default function ProductPage() {
   
   const pricePerItem = parseFloat(product.price.replace('$', ''));
   const totalPrice = (quantity * pricePerItem).toFixed(2);
+
   const handleQuantityChange = (amount: number) => {
     setQuantity(prev => Math.max(1, prev + amount));
   };
+  
+  const handleAddToCart = () => {
+      addToCart(product, quantity);
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 2000); // Reset after 2 seconds
+  }
 
   return (
     <MainLayout>
@@ -72,7 +81,7 @@ export default function ProductPage() {
                   </div>
               </div>
 
-              <div className="mt-6 md:mt-0">
+              <div className="mt-6 md:mt-0 pb-24 md:pb-0">
                   <p className="text-sm font-bold text-gray-500">{product.category.toUpperCase()}</p>
                   <h1 className="text-4xl font-bold text-gray-800 mt-1">{product.name}</h1>
                   
@@ -106,11 +115,19 @@ export default function ProductPage() {
                   </div>
 
                   <div className="mt-8 flex items-center space-x-4">
-                      <button className="p-4 bg-green-100 rounded-full">
-                          <HeartIcon className="w-6 h-6 text-green-500"/>
+                      <button 
+                        onClick={() => handleLikeToggle(product.id)}
+                        className={`p-4 rounded-full transition-colors ${product.liked ? 'bg-red-100' : 'bg-gray-100'}`}
+                      >
+                          <HeartIcon className={product.liked ? 'text-red-500' : 'text-gray-400'} filled={product.liked}/>
                       </button>
-                      <button className="flex-grow bg-yellow-400 text-gray-800 font-bold py-4 rounded-full text-center shadow-lg shadow-yellow-400/30 hover:bg-yellow-500 transition-colors">
-                          ADD TO CART - ${totalPrice}
+                      <button 
+                        onClick={handleAddToCart}
+                        className={`flex-grow font-bold py-4 rounded-full text-center transition-all duration-300 ${
+                            isAdded ? 'bg-green-500 text-white' : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
+                        }`}
+                      >
+                          {isAdded ? 'Added to Cart!' : `ADD TO CART - $${totalPrice}`}
                       </button>
                   </div>
               </div>

@@ -1,98 +1,113 @@
 "use client";
 
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import MainLayout from './components/MainLayout';
-import Header from './components/Header';
-import ProductCard from './components/ProductCard';
-import { ArrowRightIcon } from './components/Icons';
-import { categories } from './data/mockData';
-import { useProductStore } from './hooks/useProductStore';
+import React, { useState, useEffect } from 'react';
+// import Link from 'next/link'; // Removed to fix build error
+import { motion, AnimatePresence } from 'framer-motion';
 
-export default function HomePage() {
-  const { products, handleLikeToggle } = useProductStore();
-  const trendingDeals = products.slice(0, 5);
+export default function AnimatedSplashPage() {
+    const [showContent, setShowContent] = useState(false);
 
-  return (
-    <MainLayout>
-      <div className="w-full max-w-7xl mx-auto bg-white flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow overflow-y-auto px-4 md:px-8 py-6">
-          <motion.section 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8"
-          >
-            <div className="h-48 md:h-64 rounded-2xl p-6 text-white flex flex-col justify-end relative overflow-hidden">
-               <Image
-                  src="/assests/images/food.jpg"
-                  alt="Recommended recipe"
-                  fill
-                  className="object-cover"
-                />
-              {/* <div className="bg-black bg-opacity-30 p-3 rounded-lg backdrop-blur-sm inline-block max-w-max relative z-10">
-                <h2 className="font-bold text-xl">Recommended</h2>
-                <p className="text-lg">Recipe Today</p>
-              </div> */}
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowContent(true);
+        }, 1500);
 
-              {/* make it  dynamic */}
-            </div>
-          </motion.section>
-          
-          <motion.section 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mb-8"
-          >
-            <Link href="/categories" className="flex justify-between items-center mb-4 group">
-              <h3 className="text-2xl font-bold text-gray-800">Categories</h3>
-              <ArrowRightIcon className="text-gray-500 group-hover:text-orange-500 transition-colors" />
-            </Link>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {categories.map((category) => {
-                const IconComponent = category.icon;
-                return (
-                  <Link href={`/categories/${category.slug}`} key={category.slug} className="flex flex-col items-center space-y-2 group">
-                    <div className="w-full h-24 bg-gray-100 rounded-2xl flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-                      <IconComponent className="w-10 h-10 text-orange-500" />
+        return () => clearTimeout(timer);
+    }, []);
+
+    return (
+        <div className="relative h-screen w-screen overflow-hidden">
+            <div className="absolute inset-0 bg-white z-0"></div>
+            <motion.div
+                className="absolute inset-0 bg-[#ffe59a] z-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: showContent ? 1 : 0 }}
+                transition={{ duration: 1, delay: 1.3 }}
+            ></motion.div>
+
+            <AnimatePresence>
+                {!showContent && (
+                    <motion.div
+                        key="initial-logo"
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="absolute inset-0 flex items-center justify-center z-20"
+                    >
+                        <motion.img
+                            layoutId="splash-logo"
+                            src="/icon0.svg"
+                            alt="Eazika Logo"
+                            className="w-32 h-32"
+                            animate={{ scale: [1, 1.05, 1] }}
+                            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {showContent && (
+                <motion.div
+                    key="content-screen"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="relative z-10 flex flex-col h-full items-center justify-between text-center p-8"
+                >
+                    <div /> 
+                    
+                    <div className="flex flex-col items-center">
+                        <div className="w-[300px] h-[225px] flex items-center justify-center">
+                             <motion.img
+                                layoutId="splash-logo"
+                                src="/icon0.svg"
+                                alt="Eazika Logo"
+                                className="w-24 h-24"
+                                transition={{ duration: 0.8, ease: "circOut" }}
+                            />
+                        </div>
+
+                        <motion.h1 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.8 }}
+                            className="text-2xl md:text-3xl font-bold text-gray-800 mt-8"
+                        >
+                            Fast and responsible delivery <br/> by our courier
+                        </motion.h1>
+                        <motion.p 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 1.0 }}
+                            className="mt-4 max-w-sm text-gray-500"
+                        >
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        </motion.p>
                     </div>
-                    <p className="font-semibold text-gray-700">{category.name}</p>
-                  </Link>
-                );
-              })}
-            </div>
-          </motion.section>
 
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-2xl font-bold text-gray-800">Trending Deals</h3>
-              <ArrowRightIcon className="text-gray-500" />
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {trendingDeals.map((item) => (
-                <Link href={`/products/${item.name.toLowerCase().replace(/\s+/g, '-')}`} key={item.id}>
-                  <ProductCard 
-                    {...item} 
-                    onLikeToggle={(e: React.MouseEvent) => {
-                      e.preventDefault();
-                      handleLikeToggle(item.id);
-                    }} 
-                  />
-                </Link>
-              ))}
-            </div>
-          </motion.section>
-        </main>
-      </div>
-    </MainLayout>
-  );
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 1.2 }}
+                        className="w-full max-w-sm space-y-3"
+                    >
+                        {/* UPDATED to <a> tag */}
+                        <a 
+                            href="/register"
+                            className="block w-full bg-gray-800 text-white font-bold py-4 rounded-full text-center hover:bg-gray-900 transition-transform active:scale-95 shadow-lg"
+                        >
+                            CREATE AN ACCOUNT
+                        </a>
+                        {/* UPDATED to <a> tag */}
+                        <a 
+                            href="/login"
+                            className="block w-full bg-white text-gray-800 font-bold py-4 rounded-full text-center hover:bg-gray-100 transition-transform active:scale-95 border-2 border-gray-300"
+                        >
+                            LOGIN
+                        </a>
+                    </motion.div>
+                </motion.div>
+            )}
+        </div>
+    );
 }
 

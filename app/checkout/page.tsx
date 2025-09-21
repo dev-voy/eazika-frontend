@@ -1,8 +1,9 @@
 "use client";
-import Image from "next/image";
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import MainLayout from "@/app/components/MainLayout";
 
 // --- SVG Icons ---
 const ArrowLeftIcon = ({ className }: { className?: string }) => (
@@ -60,7 +61,6 @@ const CloseIcon = ({ className }: { className?: string }) => (
 
 const ShippingAddressStep = ({ onNext }: { onNext: () => void }) => (
   <div className="p-6 space-y-4">
-    {/* ... Form fields ... */}
     <div>
       <label className="text-sm font-medium text-gray-700">Full Name</label>
       <input
@@ -152,7 +152,6 @@ const PaymentMethodStep = ({ onConfirm }: { onConfirm: () => void }) => {
 
   const CreditCardForm = () => (
     <div className="space-y-4 mt-6">
-      {/* ... Credit Card Form fields ... */}
       <div>
         <label className="text-sm font-medium text-gray-700">
           Card Holder Name
@@ -205,7 +204,6 @@ const PaymentMethodStep = ({ onConfirm }: { onConfirm: () => void }) => {
   );
   const UpiForm = () => (
     <div className="space-y-4 mt-6">
-      {/* ... UPI Form fields ... */}
       <div>
         <label className="text-sm font-medium text-gray-700">UPI ID</label>
         <input
@@ -221,7 +219,6 @@ const PaymentMethodStep = ({ onConfirm }: { onConfirm: () => void }) => {
   );
   const CodSection = () => (
     <div className="mt-6 p-4 bg-gray-100 rounded-xl border">
-      {/* ... COD details ... */}
       <h3 className="font-bold text-gray-800">Confirm Shipping Address</h3>
       <p className="text-sm text-gray-600 mt-2">
         Customer Name <br />
@@ -294,7 +291,9 @@ const PaymentMethodStep = ({ onConfirm }: { onConfirm: () => void }) => {
             >
               <Image
                 src="/assests/images/CARD1.jpeg"
-                alt="Silver Credit Card"
+                alt="Gold Credit Card"
+                width={128}
+                height={80}
                 className="rounded-lg"
               />
               {selectedCard === "gold" && (
@@ -314,6 +313,8 @@ const PaymentMethodStep = ({ onConfirm }: { onConfirm: () => void }) => {
               <Image
                 src="/assests/images/CARD2.jpeg"
                 alt="Silver Credit Card"
+                width={128}
+                height={80}
                 className="rounded-lg"
               />
               {selectedCard === "silver" && (
@@ -340,12 +341,13 @@ const PaymentMethodStep = ({ onConfirm }: { onConfirm: () => void }) => {
   );
 };
 
-// --- NEW Confirmation Step ---
 const ConfirmationStep = () => (
   <div className="flex flex-col items-center justify-center text-center p-6 h-full">
     <Image
-      src="https://placehold.co/300x200/F7F7F7/333333?text=Order+Illustration&font=raleway"
+      src="/assests/images/66.png"
       alt="Order in process"
+      width={300}
+      height={225}
       className="w-64 h-auto"
     />
     <h2 className="text-2xl font-bold text-gray-800 mt-8">
@@ -354,9 +356,12 @@ const ConfirmationStep = () => (
     <p className="text-gray-600 mt-2">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
     </p>
-    <button className="w-full mt-8 bg-yellow-400 text-gray-800 font-bold py-4 rounded-full text-center hover:bg-yellow-500 transition-colors">
+    <Link 
+      href="/track-order"
+      className="block w-full mt-8 bg-yellow-400 text-gray-800 font-bold py-4 rounded-full text-center hover:bg-yellow-500 transition-colors"
+    >
       TRACK YOUR ORDER
-    </button>
+    </Link>
   </div>
 );
 
@@ -379,69 +384,71 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="bg-white min-h-screen font-sans">
-      <div className="w-full max-w-md mx-auto bg-gray-50 flex flex-col h-screen">
-        <header className="px-4 py-4 flex items-center space-x-4 border-b bg-white sticky top-0 z-10">
-          {step === "confirmation" ? (
-            <Link href="/" aria-label="Close and go home">
-              <CloseIcon className="w-6 h-6 text-gray-800" />
-            </Link>
-          ) : step === "address" ? (
-            <Link href="/cart" aria-label="Go back to cart">
-              <ArrowLeftIcon className="w-6 h-6 text-gray-800" />
-            </Link>
-          ) : (
-            <button
-              onClick={() => setStep("address")}
-              aria-label="Go back to shipping"
-            >
-              <ArrowLeftIcon className="w-6 h-6 text-gray-800" />
-            </button>
-          )}
-          <h1 className="text-xl font-bold text-gray-800">
-            {step === "confirmation" ? "Thank You" : "Checkout"}
-          </h1>
-        </header>
+    <MainLayout>
+        <div className="w-full max-w-md mx-auto bg-gray-50 flex flex-col min-h-screen">
+            <header className="px-4 py-4 flex items-center space-x-4 border-b bg-white sticky top-0 z-10">
+            {step === "confirmation" ? (
+                <Link href="/home" aria-label="Close and go home">
+                <CloseIcon className="w-6 h-6 text-gray-800" />
+                </Link>
+            ) : step === "address" ? (
+                <Link href="/cart" aria-label="Go back to cart">
+                <ArrowLeftIcon className="w-6 h-6 text-gray-800" />
+                </Link>
+            ) : (
+                <button
+                onClick={() => setStep("address")}
+                aria-label="Go back to shipping"
+                >
+                <ArrowLeftIcon className="w-6 h-6 text-gray-800" />
+                </button>
+            )}
+            <h1 className="text-xl font-bold text-gray-800">
+                {step === "confirmation" ? "Thank You" : "Checkout"}
+            </h1>
+            </header>
 
-        <main className="flex-grow overflow-y-auto">
-          {step !== "confirmation" && (
-            <div className="p-6 bg-white">
-              <div className="relative w-full max-w-sm mx-auto">
-                <div className="absolute top-4 left-0 w-full h-1 bg-gray-200"></div>
-                <div
-                  className="absolute top-4 left-0 h-1 bg-yellow-400 origin-left transition-transform duration-500 ease-in-out"
-                  style={{ transform: `scaleX(${step === "address" ? 0 : 1})` }}
-                ></div>
-                <div className="relative flex justify-between">
-                  <div className="text-center">
-                    <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-white transition-colors duration-300">
-                      {step === "payment" && <CheckIcon className="w-5 h-5" />}
-                    </div>
-                    <p className="text-sm font-semibold mt-2 text-black">
-                      Shipping Address
-                    </p>
-                  </div>
-                  <div className="text-center">
+            {/* UPDATED: Added padding-bottom to the main scrolling area */}
+            <main className="flex-grow overflow-y-auto pb-24">
+            {step !== "confirmation" && (
+                <div className="p-6 bg-white">
+                <div className="relative w-full max-w-sm mx-auto">
+                    <div className="absolute top-4 left-0 w-full h-1 bg-gray-200"></div>
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-white transition-colors duration-300 ${
-                        step === "payment" ? "bg-yellow-400" : "bg-gray-200"
-                      }`}
+                    className="absolute top-4 left-0 h-1 bg-yellow-400 origin-left transition-transform duration-500 ease-in-out"
+                    style={{ transform: `scaleX(${step === "address" ? 0 : 1})` }}
                     ></div>
-                    <p
-                      className={`text-sm font-semibold mt-2 transition-colors duration-300 ${
-                        step === "payment" ? "text-black" : "text-gray-400"
-                      }`}
-                    >
-                      Payment Method
-                    </p>
+                    <div className="relative flex justify-between">
+                    <div className="text-center">
+                        <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-white transition-colors duration-300">
+                        {step === "payment" && <CheckIcon className="w-5 h-5" />}
+                        </div>
+                        <p className="text-sm font-semibold mt-2 text-black">
+                        Shipping Address
+                        </p>
+                      </div>
+                      <div className="text-center">
+                          <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-white transition-colors duration-300 ${
+                              step === "payment" ? "bg-yellow-400" : "bg-gray-200"
+                          }`}
+                          ></div>
+                          <p
+                          className={`text-sm font-semibold mt-2 transition-colors duration-300 ${
+                              step === "payment" ? "text-black" : "text-gray-400"
+                          }`}
+                          >
+                          Payment Method
+                          </p>
+                      </div>
+                      </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          )}
-          {renderContent()}
-        </main>
-      </div>
-    </div>
+                  </div>
+              )}
+              {renderContent()}
+            </main>
+        </div>
+    </MainLayout>
   );
 }
+
