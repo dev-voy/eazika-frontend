@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import MainLayout from '@/app/components/MainLayout';
@@ -16,11 +16,34 @@ export default function SettingsPage() {
         phone: '+880 1617202070',
         avatar: '/assests/images/profile-pic.jpeg'
     });
+    
+    // State to hold the preview of the new avatar
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    // Ref to access the hidden file input element
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setUserData(prev => ({ ...prev, [name]: value }));
     };
+
+    // This function is triggered when the user selects a new image file
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatarPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    
+    // This function programmatically clicks the hidden file input
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+
 
     return (
         <MainLayout>
@@ -40,11 +63,25 @@ export default function SettingsPage() {
                         <div className="flex flex-col items-center">
                             <div className="relative mb-4">
                                 <div className="w-24 h-24 rounded-full relative overflow-hidden border-4 border-gray-100">
-                                    <Image src={userData.avatar} alt="User Avatar" fill className="object-cover"/>
+                                    {/* The Image now shows the preview, or falls back to the original avatar */}
+                                    <Image src={avatarPreview || userData.avatar} alt="User Avatar" fill className="object-cover"/>
                                 </div>
-                                <button className="absolute bottom-0 right-0 p-2 bg-yellow-400 rounded-full text-gray-800 hover:bg-yellow-500 transition-colors border-2 border-white">
+                                {/* This is the visible button that triggers the file input */}
+                                <button 
+                                    onClick={handleAvatarClick}
+                                    className="absolute bottom-0 right-0 p-2 bg-yellow-400 rounded-full text-gray-800 hover:bg-yellow-500 transition-colors border-2 border-white"
+                                    aria-label="Change profile picture"
+                                >
                                     <Camera className="w-4 h-4" />
                                 </button>
+                                {/* This is the actual file input, but it's hidden from view */}
+                                <input 
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleAvatarChange}
+                                    className="hidden"
+                                    accept="image/png, image/jpeg"
+                                />
                             </div>
                         </div>
 

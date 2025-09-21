@@ -1,10 +1,11 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import MainLayout from '@/app/components/MainLayout';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
     ShoppingBag, 
     Heart, 
@@ -28,13 +29,56 @@ const ProfileMenuItem = ({ href, icon: Icon, label }: { href: string, icon: Reac
     </Link>
 );
 
+// --- Logout Confirmation Modal ---
+const LogoutConfirmationModal = ({ onConfirm, onCancel }: { onConfirm: () => void, onCancel: () => void }) => (
+    <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+    >
+        <motion.div
+            initial={{ scale: 0.9, y: 20, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.9, y: 20, opacity: 0 }}
+            className="bg-white rounded-2xl w-full max-w-sm shadow-xl p-6 text-center"
+        >
+            <LogOut className="mx-auto h-12 w-12 text-red-500 bg-red-50 p-2 rounded-full" />
+            <h2 className="text-2xl font-bold mt-4 text-gray-800">Confirm Logout</h2>
+            <p className="mt-2 text-gray-600">Are you sure you want to log out of your account?</p>
+            <div className="flex gap-4 mt-6">
+                <button
+                onClick={onCancel}
+                className="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-full text-center hover:bg-gray-300 transition-colors"
+                >
+                Cancel
+                </button>
+                <button
+                onClick={onConfirm}
+                className="w-full bg-red-500 text-white font-bold py-3 rounded-full text-center hover:bg-red-600 transition-colors"
+                >
+                Logout
+                </button>
+            </div>
+        </motion.div>
+    </motion.div>
+);
+
 
 export default function ProfilePage() {
-    // Mock user data
+    const router = useRouter();
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+    const handleLogout = () => {
+        setShowLogoutConfirm(false);
+        router.push('/');
+    };
+
     const user = {
         name: 'Rafatul Islam',
         email: 'rafatul@eazika.com',
-        avatar: '/assests/images/profile-pic.jpeg'
+        phone: '+880 1617202070',
+        avatar: '/assests/images/66.png' 
     };
 
     const menuItems = [
@@ -51,7 +95,8 @@ export default function ProfilePage() {
 
   return (
     <MainLayout>
-      <div className="w-full max-w-5xl mx-auto bg-gray-50 min-h-screen">
+      {/* CORRECTED: Removed max-w-5xl and mx-auto to allow full width */}
+      <div className="w-full bg-gray-50 min-h-screen">
         
         <main className="flex-grow overflow-y-auto p-4 md:p-6 space-y-6">
             <motion.div 
@@ -67,56 +112,71 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <h1 className="text-xl font-bold">{user.name}</h1>
-                    <p className="text-yellow-100">{user.email}</p>
+                    <p className="text-white/80">{user.email}</p>
+                    <p className="text-white/80 text-sm">{user.phone}</p>
                   </div>
                 </div>
-                <Link href="/settings" className="p-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors">
+                <Link href="/settings" className="p-2 bg-black bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors">
                   <Edit className="h-5 w-5" />
                 </Link>
               </div>
             </motion.div>
 
-            <motion.div 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100"
-            >
-              <div className="divide-y divide-gray-100">
-                {menuItems.map((item) => (
-                  <ProfileMenuItem key={item.label} {...item} />
-                ))}
-              </div>
-            </motion.div>
+            {/* Grid layout for desktop */}
+            <div className="grid md:grid-cols-2 md:gap-6">
+                <motion.div 
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="bg-white rounded-2xl shadow-sm border border-gray-100"
+                >
+                  <div className="divide-y divide-gray-100">
+                    {menuItems.map((item) => (
+                      <ProfileMenuItem key={item.label} {...item} />
+                    ))}
+                  </div>
+                </motion.div>
 
-            <motion.div 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100"
-            >
-              <div className="divide-y divide-gray-100">
-                {supportItems.map((item) => (
-                   <ProfileMenuItem key={item.label} {...item} />
-                ))}
-              </div>
-            </motion.div>
+                <div className="space-y-6 mt-6 md:mt-0">
+                    <motion.div 
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.3 }}
+                      className="bg-white rounded-2xl shadow-sm border border-gray-100"
+                    >
+                      <div className="divide-y divide-gray-100">
+                        {supportItems.map((item) => (
+                           <ProfileMenuItem key={item.label} {...item} />
+                        ))}
+                      </div>
+                    </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <Link
-                href="/"
-                className="w-full flex items-center justify-center p-4 text-red-600 font-semibold bg-white rounded-2xl shadow-sm border border-gray-100 hover:bg-red-50 transition-colors"
-              >
-                <LogOut className="h-5 w-5 mr-2" />
-                Logout
-              </Link>
-            </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.4 }}
+                    >
+                      <button
+                        onClick={() => setShowLogoutConfirm(true)}
+                        className="w-full flex items-center justify-center p-4 text-red-600 font-semibold bg-white rounded-2xl shadow-sm border border-gray-100 hover:bg-red-50 transition-colors"
+                      >
+                        <LogOut className="h-5 w-5 mr-2" />
+                        Logout
+                      </button>
+                    </motion.div>
+                </div>
+            </div>
         </main>
       </div>
+      
+      <AnimatePresence>
+        {showLogoutConfirm && (
+            <LogoutConfirmationModal
+                onConfirm={handleLogout}
+                onCancel={() => setShowLogoutConfirm(false)}
+            />
+        )}
+      </AnimatePresence>
     </MainLayout>
   );
 }

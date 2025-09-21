@@ -63,7 +63,7 @@ export default function HomePage() {
                 <div className="h-40 md:h-56 rounded-2xl p-4 sm:p-6 text-white flex flex-col justify-end relative overflow-hidden">
                    <Image
                       src="/assests/images/food.jpg"
-                      alt="food banner"
+                      alt="Recommended recipe"
                       fill
                       className="object-cover"
                     />
@@ -106,12 +106,13 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <div className="flex justify-between items-center mb-4">
+            {/* THIS IS THE CHANGE: Wrapped the header in a Link */}
+            <Link href="/trending-deals" className="flex justify-between items-center mb-4 group">
               <h3 className="text-xl md:text-2xl font-bold text-gray-800">
                 {searchTerm ? 'Search Results' : 'Trending Deals'}
               </h3>
-              {!searchTerm && <ArrowRightIcon className="w-5 h-5 text-gray-500" />}
-            </div>
+              {!searchTerm && <ArrowRightIcon className="w-5 h-5 text-gray-500 group-hover:text-orange-500 transition-colors" />}
+            </Link>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
               {trendingDeals.map((item) => (
                 <Link href={`/products/${item.name.toLowerCase().replace(/\s+/g, '-')}`} key={item.id}>
@@ -131,4 +132,3 @@ export default function HomePage() {
     </MainLayout>
   );
 }
-

@@ -24,7 +24,8 @@ export default function SupportPage() {
                     </Link>
                     <h1 className="text-2xl font-bold text-gray-800">Help & Support</h1>
                 </header>
-                <main className="flex-grow overflow-y-auto p-4 md:p-6 grid md:grid-cols-3 gap-8">
+                {/* UPDATED: Added padding-bottom to clear the fixed BottomNav on mobile */}
+                <main className="flex-grow overflow-y-auto p-4 md:p-6 grid md:grid-cols-3 gap-8 pb-24 md:pb-6">
                     {/* FAQ Section */}
                     <div className="md:col-span-2">
                         <motion.div 

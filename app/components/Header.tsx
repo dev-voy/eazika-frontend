@@ -5,7 +5,7 @@ import { BellIcon } from './Icons'; // Corrected import path
 
 export default function Header() {
     const user = {
-        name: 'Rafatul Islam',
+        name: 'Kartikey',
         avatar: '/assests/images/profile-pic.jpeg'
     };
 

@@ -142,13 +142,14 @@ export default function CustomerRegisterPage() {
               />
               <label htmlFor="agreeTerms" className="ml-2 block text-sm text-gray-900">
                 I agree to the{' '}
-                <a href="#" className="text-yellow-600 hover:text-yellow-500 font-medium">
+                <Link href="/terms-of-service" className="text-yellow-600 hover:text-yellow-500 font-medium">
                   Terms of Service
-                </a>{' '}
-                and{' '}
-                <a href="#" className="text-yellow-600 hover:text-yellow-500 font-medium">
+                </Link>
+                {' '}and{' '}
+                {/* CORRECTED LINK */}
+                <Link href="/privacy-policy" className="text-yellow-600 hover:text-yellow-500 font-medium">
                   Privacy Policy
-                </a>
+                </Link>
               </label>
             </div>
 
@@ -186,3 +187,4 @@ export default function CustomerRegisterPage() {
     </div>
   );
 }
+
