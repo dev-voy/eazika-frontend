@@ -1,14 +1,14 @@
 export type userType = {
   id: string;
-  phone: string;
-  email: string;
-  password: string;
   name: string;
+  email: string;
+  phone: string;
   role: "customer" | "shopkeeper" | "delivery";
   profileImage?: string | null;
   isActive: boolean;
   isVerified: boolean;
-  deviceTokens: string[];
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type registerUserType = {
@@ -20,6 +20,6 @@ export type registerUserType = {
 };
 
 export type loginUserType = {
-  email: string;
+  emailPhone: string;
   password: string;
 };
