@@ -1,25 +1,82 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image'; // Import the Next.js Image component
-import { Eye, EyeOff } from 'lucide-react'; // CORRECTED: Removed unused 'ShoppingBag' import
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
+import { motion } from "framer-motion";
+
+import axios, { isAxiosError } from "@/lib/axios";
+import { toast } from "sonner";
+// import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { addUserToRedux } from "@/store/actions/userActions";
 
 export default function CustomerLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [emailPhone, setEmailPhone] = useState("");
+  const [password, setPassword] = useState("");
+
+  const router = useRouter();
+  // const searchParams = useSearchParams();
+  // const redirect = searchParams.get("redirect") || "/profile";
+  const redirect = "/profile";
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    try {
+      setIsLoading(true);
+      e.preventDefault();
+      const response = await axios.post("/user/login", {
+        emailPhone,
+        password,
+      });
+      if (response.status !== 200) {
+        toast.error("Login failed. Please try again.");
+        return;
+      }
+      addUserToRedux(
+        response.data.user,
+        response.data.refreshToken,
+        response.data.accessToken
+      );
+      toast.success("Login successful!");
+      setTimeout(() => router.push(redirect), 100);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        if (error.response)
+          toast.error(error.response.data.message || "Login failed.");
+        else if (error.request)
+          toast.error("No response from server. Please try again later.");
+        else toast.error(error.message || "Login failed. Please try again.");
+      }
+      if (error instanceof Error)
+        toast.error(error.message || "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center"
         >
           {/* CORRECTED: Replaced <img> with the optimized Next.js <Image> component */}
-          <Image src="/icon0.svg" alt="Eazika Logo" width={64} height={64} className="mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900">Welcome to Eazika</h1>
+          <Image
+            src="/icon0.svg"
+            alt="Eazika Logo"
+            width={64}
+            height={64}
+            className="mx-auto mb-4"
+          />
+          <h1 className="text-3xl font-bold text-gray-900">
+            Welcome to Eazika
+          </h1>
           <h2 className="mt-6 text-xl font-medium text-gray-600">
             Sign in to your account
           </h2>
@@ -29,16 +86,19 @@ export default function CustomerLoginPage() {
         </motion.div>
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
         className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
       >
         <div className="bg-white py-8 px-4 shadow-xl sm:rounded-lg sm:px-10 border border-gray-200">
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="emailPhone" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="emailPhone"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email or Phone Number
               </label>
               <div className="mt-1">
@@ -46,6 +106,8 @@ export default function CustomerLoginPage() {
                   id="emailPhone"
                   name="emailPhone"
                   type="text"
+                  value={emailPhone}
+                  onChange={(e) => setEmailPhone(e.target.value)}
                   required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
                   placeholder="Enter your email or phone number"
@@ -54,14 +116,20 @@ export default function CustomerLoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password
               </label>
               <div className="mt-1 relative">
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
                   required
                   className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
                   placeholder="Enter your password"
@@ -72,9 +140,9 @@ export default function CustomerLoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
-                  ) : (
                     <Eye className="h-4 w-4 text-gray-400" />
+                  ) : (
+                    <EyeOff className="h-4 w-4 text-gray-400" />
                   )}
                 </button>
               </div>
@@ -88,22 +156,28 @@ export default function CustomerLoginPage() {
                   type="checkbox"
                   className="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
                 />
-                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-900">
+                <label
+                  htmlFor="rememberMe"
+                  className="ml-2 block text-sm text-gray-900"
+                >
                   Remember me
                 </label>
               </div>
 
               <div className="text-sm">
-                <Link href="/forgot-password" className="font-medium text-yellow-600 hover:text-yellow-500">
+                <Link
+                  href="/forgot-password"
+                  className="font-medium text-yellow-600 hover:text-yellow-500"
+                >
                   Forgot your password?
                 </Link>
               </div>
             </div>
 
             <div>
-              <Link href="/home" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors">
-                  Sign in
-              </Link>
+              <Button className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors">
+                {isLoading ? "Signing in..." : "Sign In"}
+              </Button>
             </div>
           </form>
 
@@ -113,7 +187,9 @@ export default function CustomerLoginPage() {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">New to Eazika?</span>
+                <span className="px-2 bg-white text-gray-500">
+                  New to Eazika?
+                </span>
               </div>
             </div>
 
@@ -131,4 +207,3 @@ export default function CustomerLoginPage() {
     </div>
   );
 }
-
