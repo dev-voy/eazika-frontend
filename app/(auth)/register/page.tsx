@@ -1,12 +1,72 @@
 "use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { ShoppingBag, Eye, EyeOff, User as UserIcon, Mail, Phone } from 'lucide-react';
+import { useState } from "react";
+// import { registerUser } from "@/service/auth";
+import axios from "@/lib/axios";
+import { toast } from "sonner";
+import Link from "next/link";
+import { ShoppingBag, Eye, EyeOff, User, Mail, Phone } from "lucide-react";
+import { registerUserType } from "@/types";
+import { useRouter } from "next/navigation";
 
 export default function CustomerRegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [userData, setUserData] = useState<registerUserType>({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const router = useRouter();
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setUserData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
+
+  async function registerUser(e: React.FormEvent<HTMLFormElement>) {
+    try {
+      e.preventDefault();
+      setIsLoading(true);
+      if (userData.password !== userData.confirmPassword) {
+        toast.error("Passwords do not match");
+        setIsLoading(false);
+        return;
+      }
+      if (userData.password.length < 6) {
+        toast.error("Password must be at least 6 characters");
+        setIsLoading(false);
+        return;
+      }
+      if (!userData.name || !userData.email || !userData.phone) {
+        toast.error("Please fill in all fields");
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await axios.post("user/register", userData);
+
+      if (response.status !== 201) {
+        alert(response.data.message);
+        setIsLoading(false);
+        return;
+      }
+      toast.success("Registration successful! Please log in.");
+
+      router.push("/login");
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      toast.error("Registration failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -27,9 +87,12 @@ export default function CustomerRegisterPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-xl sm:rounded-lg sm:px-10 border border-gray-200">
-          <form className="space-y-6">
+          <form onSubmit={registerUser} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Full Name
               </label>
               <div className="mt-1 relative">
@@ -37,16 +100,21 @@ export default function CustomerRegisterPage() {
                   id="name"
                   name="name"
                   type="text"
+                  value={userData.name}
+                  onChange={handleChange}
                   required
                   className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
                   placeholder="Enter your full name"
                 />
-                <UserIcon className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                <User className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
               </div>
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email Address
               </label>
               <div className="mt-1 relative">
@@ -54,6 +122,8 @@ export default function CustomerRegisterPage() {
                   id="email"
                   name="email"
                   type="email"
+                  value={userData.email}
+                  onChange={handleChange}
                   required
                   className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
                   placeholder="Enter your email address"
@@ -63,14 +133,19 @@ export default function CustomerRegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="phoneNumber"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Phone Number
               </label>
               <div className="mt-1 relative">
                 <input
-                  id="phoneNumber"
-                  name="phoneNumber"
+                  id="phone"
+                  name="phone"
                   type="tel"
+                  value={userData.phone}
+                  onChange={handleChange}
                   required
                   className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
                   placeholder="Enter your phone number"
@@ -80,14 +155,19 @@ export default function CustomerRegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password
               </label>
               <div className="mt-1 relative">
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
+                  value={userData.password}
+                  onChange={handleChange}
                   required
                   className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
                   placeholder="Create a password (min. 6 characters)"
@@ -107,14 +187,19 @@ export default function CustomerRegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Confirm Password
               </label>
               <div className="mt-1 relative">
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={userData.confirmPassword}
+                  onChange={handleChange}
                   required
                   className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
                   placeholder="Confirm your password"
@@ -140,14 +225,22 @@ export default function CustomerRegisterPage() {
                 type="checkbox"
                 className="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
               />
-              <label htmlFor="agreeTerms" className="ml-2 block text-sm text-gray-900">
-                I agree to the{' '}
-                <Link href="/terms-of-service" className="text-yellow-600 hover:text-yellow-500 font-medium">
+              <label
+                htmlFor="agreeTerms"
+                className="ml-2 block text-sm text-gray-900"
+              >
+                I agree to the{" "}
+                <Link
+                  href="/terms-of-service"
+                  className="text-yellow-600 hover:text-yellow-500 font-medium"
+                >
                   Terms of Service
-                </Link>
-                {' '}and{' '}
-                {/* CORRECTED LINK */}
-                <Link href="/privacy-policy" className="text-yellow-600 hover:text-yellow-500 font-medium">
+                </Link>{" "}
+                and {/* CORRECTED LINK */}
+                <Link
+                  href="/privacy-policy"
+                  className="text-yellow-600 hover:text-yellow-500 font-medium"
+                >
                   Privacy Policy
                 </Link>
               </label>
@@ -158,7 +251,7 @@ export default function CustomerRegisterPage() {
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors"
               >
-                Create Account
+                {isLoading ? "Creating Account..." : "Create Account"}
               </button>
             </div>
           </form>
@@ -169,7 +262,9 @@ export default function CustomerRegisterPage() {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Already have an account?</span>
+                <span className="px-2 bg-white text-gray-500">
+                  Already have an account?
+                </span>
               </div>
             </div>
 
@@ -187,4 +282,3 @@ export default function CustomerRegisterPage() {
     </div>
   );
 }
-
