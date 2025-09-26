@@ -1,7 +1,8 @@
 "use client";
 
 import React from 'react';
-import { HeartIcon } from './Icons'; // Corrected import path
+import Image from 'next/image'; // Import the Next.js Image component
+import { HeartIcon } from '@/app/components/Icons';
 
 type ProductCardProps = {
   name: string;
@@ -13,21 +14,20 @@ type ProductCardProps = {
 
 const ProductCard = ({ name, price, image, liked, onLikeToggle }: ProductCardProps) => {
   return (
-    // Main container with a white background and shadow
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col group transition-shadow hover:shadow-lg">
       
-      {/* Image container */}
       <div className="relative">
         <div className="aspect-square w-full">
-          {/* Reverted to a standard img tag to resolve the build error */}
-          <img 
+          {/* UPDATED: Replaced <img> with the optimized Next.js <Image> component */}
+          <Image 
             src={image} 
             alt={name} 
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+            fill
+            sizes="(max-width: 640px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300" 
           />
         </div>
         
-        {/* Heart button with no background */}
         <button 
           onClick={onLikeToggle} 
           className="absolute top-2 right-2 p-1.5 z-10 focus:outline-none"
@@ -37,7 +37,6 @@ const ProductCard = ({ name, price, image, liked, onLikeToggle }: ProductCardPro
         </button>
       </div>
 
-      {/* Text content below the image */}
       <div className="p-3">
         <h4 className="font-medium text-gray-700 truncate text-sm">{name}</h4>
         <p className="font-bold text-gray-900 text-base mt-1">{price}</p>

@@ -8,7 +8,7 @@ import MainLayout from '@/app/components/MainLayout';
 import Header from '@/app/components/Header';
 import ProductCard from '@/app/components/ProductCard';
 import { ArrowRightIcon } from '@/app/components/Icons';
-import { categories, products as allProducts } from '@/app/data/mockData';
+import { categories } from '@/app/data/mockData'; // CORRECTED: Removed unused 'allProducts' import
 import { useProductStore } from '@/app/hooks/useProductStore';
 
 const SearchIcon = ({ className }: { className?: string }) => (
@@ -92,8 +92,7 @@ export default function HomePage() {
                         <div className="w-full aspect-square bg-gray-100 rounded-2xl flex items-center justify-center group-hover:bg-orange-100 transition-colors">
                           <IconComponent className="w-8 h-8 sm:w-10 sm:h-10 text-orange-500" />
                         </div>
-                        {/* CORRECTED: Added truncate class to prevent wrapping */}
-                        <p className="font-semibold text-sm text-gray-700 text-center truncate w-full">{category.name}</p>
+                        <p className="font-semibold text-sm text-gray-700 text-center truncate w-full px-1">{category.name}</p>
                       </Link>
                     );
                   })}

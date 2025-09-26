@@ -3,10 +3,10 @@
 import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import MainLayout from '@/app/components/MainLayout';
-import ProductCard from '@/app/components/ProductCard';
-import { useProductStore } from '@/app/hooks/useProductStore';
-import { HeartIcon } from '@/app/components/Icons';
+import MainLayout from '../components/MainLayout';
+import ProductCard from '../components/ProductCard';
+import { useProductStore } from '../hooks/useProductStore';
+import { HeartIcon } from '../components/Icons';
 
 // --- SVG Icons ---
 const ArrowLeftIcon = ({ className }: { className?: string }) => (
@@ -42,7 +42,6 @@ export default function FavoritesPage() {
           <h1 className="text-2xl font-bold text-gray-800">My Wishlist</h1>
         </header>
 
-        {/* CORRECTED: Added padding-bottom to clear the fixed BottomNav on mobile */}
         <main className="flex-grow overflow-y-auto p-4 md:p-6 pb-24 md:pb-6">
           {favoriteProducts.length === 0 ? (
             <motion.div 
@@ -53,7 +52,8 @@ export default function FavoritesPage() {
             >
               <HeartIcon className="w-16 h-16 text-gray-300 mb-4" />
               <h2 className="text-xl font-bold text-gray-700">Your Wishlist is Empty</h2>
-              <p className="text-gray-500 mt-2 max-w-xs">Looks like you haven't added anything to your wishlist yet. Let's find something you'll love!</p>
+              {/* CORRECTED: Replaced ' with &apos; to fix the unescaped entity error */}
+              <p className="text-gray-500 mt-2 max-w-xs">Looks like you haven&apos;t added anything to your wishlist yet. Let&apos;s find something you&apos;ll love!</p>
               <Link href="/categories" className="text-white bg-orange-500 font-semibold mt-6 py-3 px-6 rounded-full hover:bg-orange-600 transition-colors">
                 Start Shopping
               </Link>
