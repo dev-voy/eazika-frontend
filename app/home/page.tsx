@@ -8,7 +8,7 @@ import MainLayout from '@/app/components/MainLayout';
 import Header from '@/app/components/Header';
 import ProductCard from '@/app/components/ProductCard';
 import { ArrowRightIcon } from '@/app/components/Icons';
-import { categories } from '@/app/data/mockData'; // CORRECTED: Removed unused 'allProducts' import
+import { categories, products as allProducts } from '@/app/data/mockData';
 import { useProductStore } from '@/app/hooks/useProductStore';
 
 const SearchIcon = ({ className }: { className?: string }) => (
@@ -32,7 +32,7 @@ export default function HomePage() {
     <MainLayout>
       <div className="w-full max-w-7xl mx-auto bg-white flex flex-col min-h-screen">
         <Header />
-        <main className="flex-grow overflow-y-auto px-4 md:px-8 py-6">
+        <main className="flex-grow overflow-y-auto px-4 md:px-8 py-6 pb-24 md:pb-6">
           
           <motion.section 
             initial={{ opacity: 0, y: 20 }}
@@ -60,7 +60,7 @@ export default function HomePage() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="mb-8"
               >
-                <div className="h-40 md:h-56 rounded-2xl p-4 sm:p-6 text-white flex flex-col justify-end relative overflow-hidden">
+                <div className="aspect-[5/2] md:aspect-[4/1] rounded-2xl p-4 sm:p-6 text-white flex flex-col justify-end relative overflow-hidden">
                    <Image
                       src="/assests/images/food.jpg"
                       alt="Recommended recipe"
@@ -92,7 +92,8 @@ export default function HomePage() {
                         <div className="w-full aspect-square bg-gray-100 rounded-2xl flex items-center justify-center group-hover:bg-orange-100 transition-colors">
                           <IconComponent className="w-8 h-8 sm:w-10 sm:h-10 text-orange-500" />
                         </div>
-                        <p className="font-semibold text-sm text-gray-700">{category.name}</p>
+                        {/* CORRECTED: Added truncate class to prevent wrapping */}
+                        <p className="font-semibold text-sm text-gray-700 text-center truncate w-full">{category.name}</p>
                       </Link>
                     );
                   })}
