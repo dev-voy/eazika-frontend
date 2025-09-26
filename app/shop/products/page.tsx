@@ -4,8 +4,6 @@ import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlusCircle, Search, Edit, Trash2, X, AlertTriangle } from 'lucide-react';
-
-// Using the full products list from our mock data
 import { products as initialProducts, allCategories } from '@/app/data/mockData';
 
 type Product = typeof initialProducts[0];
@@ -72,7 +70,8 @@ const DeleteConfirmationModal = ({ product, onConfirm, onCancel }: { product: Pr
         <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-white rounded-2xl w-full max-w-sm shadow-xl p-6 text-center">
             <AlertTriangle className="mx-auto h-12 w-12 text-red-500 bg-red-50 p-2 rounded-full" />
             <h2 className="text-2xl font-bold mt-4">Delete Product?</h2>
-            <p className="mt-2 text-gray-600">Are you sure you want to delete "{product.name}"? This action cannot be undone.</p>
+            {/* CORRECTED: Replaced " with &quot; to fix unescaped entity error */}
+            <p className="mt-2 text-gray-600">Are you sure you want to delete &quot;{product.name}&quot;? This action cannot be undone.</p>
             <div className="flex gap-4 mt-6">
                 <button onClick={onCancel} className="w-full bg-gray-200 py-3 rounded-full font-semibold hover:bg-gray-300">Cancel</button>
                 <button onClick={onConfirm} className="w-full bg-red-500 text-white py-3 rounded-full font-semibold hover:bg-red-600">Delete</button>
