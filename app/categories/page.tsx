@@ -42,14 +42,21 @@ export default function CategoriesPage() {
             {allCategories.map((category) => {
               const IconComponent = category.icon;
               return (
-                <motion.div key={category.slug} variants={itemVariants}>
+                <motion.div key={category.slug} variants={itemVariants} className="relative group">
                   <Link href={`/categories/${category.slug}`} className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center space-y-2 border border-gray-100 shadow-sm hover:shadow-lg hover:border-orange-200 transition-all duration-300 aspect-square">
                     <div className="w-16 h-16 flex items-center justify-center">
                        <IconComponent className="w-10 h-10 text-orange-500" />
                     </div>
-                    <p className="text-lg font-bold text-orange-500">{category.name}</p>
+                    {/* CORRECTED: Added truncate class to prevent wrapping */}
+                    <p className="text-lg font-bold text-orange-500 text-center truncate w-full px-1">{category.name}</p>
                     <p className="text-sm text-gray-500">{category.count} items</p>
                   </Link>
+                   {/* Tooltip for desktop */}
+                  <div className="absolute bottom-full mb-2 hidden group-hover:block w-auto whitespace-nowrap">
+                      <div className="bg-gray-800 text-white text-xs rounded py-1 px-2">
+                          {category.name}
+                      </div>
+                  </div>
                 </motion.div>
               )
             })}
