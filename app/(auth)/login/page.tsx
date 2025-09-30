@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Eye, EyeOff } from "lucide-react";
-import { motion } from "framer-motion";
-
-import axios, { isAxiosError } from "@/lib/axios";
-import { toast } from "sonner";
-// import { useRouter, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+// import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
+import axios, { isAxiosError } from "@/lib/axios";
 import { Button } from "@/components/ui/button";
 import { addUserToRedux } from "@/store/actions/userActions";
 
@@ -19,6 +18,7 @@ export default function CustomerLoginPage() {
   const [emailPhone, setEmailPhone] = useState("");
   const [password, setPassword] = useState("");
 
+  const dispatch = useDispatch();
   const router = useRouter();
   // const searchParams = useSearchParams();
   // const redirect = searchParams.get("redirect") || "/profile";
@@ -26,8 +26,8 @@ export default function CustomerLoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
-      setIsLoading(true);
       e.preventDefault();
+      setIsLoading(true);
       const response = await axios.post("/user/login", {
         emailPhone,
         password,
@@ -36,12 +36,14 @@ export default function CustomerLoginPage() {
         toast.error("Login failed. Please try again.");
         return;
       }
-      addUserToRedux(
-        response.data.user,
-        response.data.refreshToken,
-        response.data.accessToken
-      );
-      toast.success("Login successful!");
+      addUserToRedux({
+        dispatch: dispatch,
+        user: response.data.data.user,
+        accessToken: response.data.data.accessToken,
+        refreshToken: response.data.data.refreshToken,
+      });
+
+      toast.success("Login successful");
       setTimeout(() => router.push(redirect), 100);
     } catch (error) {
       if (isAxiosError(error)) {
@@ -51,7 +53,7 @@ export default function CustomerLoginPage() {
           toast.error("No response from server. Please try again later.");
         else toast.error(error.message || "Login failed. Please try again.");
       }
-      if (error instanceof Error)
+      if (error instanceof Error && !isAxiosError(error))
         toast.error(error.message || "Login failed. Please try again.");
     } finally {
       setIsLoading(false);
@@ -66,14 +68,13 @@ export default function CustomerLoginPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          {/* CORRECTED: Replaced <img> with the optimized Next.js <Image> component */}
-          <Image
+          {/* <Image
             src="/icon0.svg"
             alt="Eazika Logo"
             width={64}
             height={64}
             className="mx-auto mb-4"
-          />
+          /> */}
           <h1 className="text-3xl font-bold text-gray-900">
             Welcome to Eazika
           </h1>
