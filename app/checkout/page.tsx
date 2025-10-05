@@ -61,11 +61,12 @@ const CloseIcon = ({ className }: { className?: string }) => (
 
 const ShippingAddressStep = ({ onNext }: { onNext: () => void }) => (
   <div className="p-6 space-y-4">
+    {/* CORRECTED: Removed defaultValue and added placeholders for consistency */}
     <div>
       <label className="text-sm font-medium text-gray-700">Full Name</label>
       <input
         type="text"
-        defaultValue="Customer Name"
+        placeholder="Enter your full name"
         className="mt-1 block w-full bg-white border border-gray-300 rounded-xl shadow-sm py-3 px-4 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
       />
     </div>
@@ -73,7 +74,7 @@ const ShippingAddressStep = ({ onNext }: { onNext: () => void }) => (
       <label className="text-sm font-medium text-gray-700">Email Address</label>
       <input
         type="email"
-        defaultValue="ABC@gmail.com"
+        placeholder="Enter your email"
         className="mt-1 block w-full bg-white border border-gray-300 rounded-xl shadow-sm py-3 px-4 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
       />
     </div>
@@ -81,7 +82,7 @@ const ShippingAddressStep = ({ onNext }: { onNext: () => void }) => (
       <label className="text-sm font-medium text-gray-700">Phone</label>
       <input
         type="tel"
-        defaultValue="+880 1617202070"
+        placeholder="Enter your phone number"
         className="mt-1 block w-full bg-white border border-gray-300 rounded-xl shadow-sm py-3 px-4 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
       />
     </div>
@@ -408,7 +409,6 @@ export default function CheckoutPage() {
             </h1>
             </header>
 
-            {/* UPDATED: Added padding-bottom to the main scrolling area */}
             <main className="flex-grow overflow-y-auto pb-24">
             {step !== "confirmation" && (
                 <div className="p-6 bg-white">

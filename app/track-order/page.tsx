@@ -3,20 +3,20 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCustomerOrderStore } from '@/app/hooks/useCustomerOrderStore';
 import { Phone, MessageSquare, XCircle, X, CheckCircle, Package, Truck } from 'lucide-react';
 import MainLayout from '@/app/components/MainLayout';
 
 // --- Reusable Cancel Order Modal Component ---
-const CancelOrderModal = ({ onClose }: { onClose: () => void }) => {
+const CancelOrderModal = ({ onConfirm, onClose }: { onConfirm: () => void, onClose: () => void }) => {
     const cancelReasons = [
         "I want to change my order",
         "The delivery is taking too long",
         "I ordered by mistake",
         "Other"
     ];
-    
     const [selectedReason, setSelectedReason] = useState<string | null>(null);
 
     return (
@@ -55,7 +55,7 @@ const CancelOrderModal = ({ onClose }: { onClose: () => void }) => {
                 </div>
                 <div className="p-4 border-t bg-white">
                     <button 
-                        onClick={onClose}
+                        onClick={onConfirm}
                         className="w-full text-gray-800 font-bold py-4 rounded-full text-center transition-colors"
                         style={{ backgroundColor: '#ffe59a' }}
                     >
@@ -67,16 +67,47 @@ const CancelOrderModal = ({ onClose }: { onClose: () => void }) => {
     );
 };
 
+// --- NEW Success Message Modal ---
+const SuccessModal = ({ message }: { message: string }) => (
+     <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+    >
+        <motion.div
+            initial={{ scale: 0.9, y: 20 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.9, y: 20 }}
+            className="bg-white rounded-2xl w-full max-w-sm shadow-xl p-6 text-center"
+        >
+            <CheckCircle className="mx-auto h-12 w-12 text-green-500 bg-green-50 p-2 rounded-full" />
+            <h2 className="text-2xl font-bold mt-4 text-gray-800">{message}</h2>
+            <p className="mt-2 text-gray-600">You will be redirected shortly.</p>
+        </motion.div>
+    </motion.div>
+);
+
 
 export default function TrackOrderPage() {
   const { activeOrder } = useCustomerOrderStore();
   const [isCancelling, setIsCancelling] = useState(false);
+  const [showCancelSuccess, setShowCancelSuccess] = useState(false);
   const [peekHeight, setPeekHeight] = useState(300);
+  const router = useRouter();
 
   useEffect(() => {
-    // UPDATED: Panel peeks a bit higher for a better initial view
-    setPeekHeight(window.innerHeight - 200); 
+    setPeekHeight(window.innerHeight - 220);
   }, []);
+
+  const handleConfirmCancel = () => {
+    setIsCancelling(false);
+    setShowCancelSuccess(true);
+    // In a real app, you would also clear the active order from your state/backend here
+    setTimeout(() => {
+        router.push('/home'); // Redirect after showing success message
+    }, 2000); // Wait 2 seconds
+  };
 
   if (!activeOrder) {
       return (
@@ -131,10 +162,9 @@ export default function TrackOrderPage() {
         <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-3 cursor-grab"></div>
         
         <div className="px-4">
-            {/* UPDATED: Reduced font sizes and margins for a more compact design */}
             <div className="text-center">
                 <h1 className="text-xl font-bold text-gray-800">Estimated Arrival</h1>
-                <p className="text-orange-500 font-bold text-3xl">20 Mins</p>
+                <p className="text-orange-500 font-bold text-3xl mt-1">20 Mins</p>
             </div>
 
             {activeOrder.status === 'on_the_way' && (
@@ -189,7 +219,8 @@ export default function TrackOrderPage() {
       </motion.div>
 
       <AnimatePresence>
-        {isCancelling && <CancelOrderModal onClose={() => setIsCancelling(false)} />}
+        {isCancelling && <CancelOrderModal onClose={() => setIsCancelling(false)} onConfirm={handleConfirmCancel} />}
+        {showCancelSuccess && <SuccessModal message="Order Cancelled Successfully!" />}
       </AnimatePresence>
     </div>
   );
