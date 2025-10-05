@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 // import { registerUser } from "@/service/auth";
-import axios from "@/lib/axios";
+import axios, { isAxiosError } from "@/lib/axios";
 import { toast } from "sonner";
 import Link from "next/link";
 import { ShoppingBag, Eye, EyeOff, User, Mail, Phone } from "lucide-react";
@@ -30,8 +30,8 @@ export default function CustomerRegisterPage() {
   }
 
   async function registerUser(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     try {
-      e.preventDefault();
       setIsLoading(true);
       if (userData.password !== userData.confirmPassword) {
         toast.error("Passwords do not match");
@@ -52,17 +52,29 @@ export default function CustomerRegisterPage() {
       const response = await axios.post("user/register", userData);
 
       if (response.status !== 201) {
-        alert(response.data.message);
+        toast.warning(response.data.message);
         setIsLoading(false);
         return;
       }
       toast.success("Registration successful! Please log in.");
-
-      router.push("/login");
-      return response.data;
+      setTimeout(() => router.push("/login"), 1000);
+      return;
     } catch (error) {
-      console.log(error);
-      toast.error("Registration failed. Please try again.");
+      if (isAxiosError(error)) {
+        if (error.response)
+          toast.error(
+            error.response.data.message ||
+              "Registration failed. Please try again."
+          );
+        else if (error.request)
+          toast.error("No response from server. Please try again later.");
+        else
+          toast.error(
+            error.message || "Registration failed. Please try again."
+          );
+      }
+      if (error instanceof Error && !isAxiosError(error))
+        toast.error(error.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -84,7 +96,6 @@ export default function CustomerRegisterPage() {
           </p>
         </div>
       </div>
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-xl sm:rounded-lg sm:px-10 border border-gray-200">
           <form onSubmit={registerUser} className="space-y-6">

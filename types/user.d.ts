@@ -3,12 +3,10 @@ export type userType = {
   name: string;
   email: string;
   phone: string;
-  role: "customer" | "shopkeeper" | "delivery";
+  role: "CUSTOMER" | "SHOPKEEPER" | "DELIVERY" | "ADMIN";
   profileImage?: string | null;
   isActive: boolean;
   isVerified: boolean;
-  createdAt: string;
-  updatedAt: string;
 };
 
 export type registerUserType = {

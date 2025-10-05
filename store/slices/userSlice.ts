@@ -6,12 +6,10 @@ const initialState: userType = {
   name: "",
   email: "",
   phone: "",
-  role: "customer",
+  role: "CUSTOMER",
   profileImage: null,
   isActive: false,
   isVerified: false,
-  createdAt: "",
-  updatedAt: "",
 };
 
 const userSlice = createSlice({
