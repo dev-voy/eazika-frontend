@@ -1,26 +1,44 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { CheckCircle, Clock, ArrowRight } from 'lucide-react';
+import { fetchDeliveryHistory } from '@/lib/delivery';
 
-// Mock data for order history
-const orderHistory = [
-    { id: '#EAZ123456', status: 'Completed', date: '28 Sep, 2025', earnings: '$5.50', pickup: 'Eazika Fresh Mart', delivery: '123 Main St' },
-    { id: '#EAZ123458', status: 'Completed', date: '28 Sep, 2025', earnings: '$7.20', pickup: 'Speedy Supplies', delivery: '456 Oak Ave' },
-    { id: '#EAZ123455', status: 'Cancelled', date: '27 Sep, 2025', earnings: '$0.00', pickup: 'Quick Grocers', delivery: '789 Pine Ln' },
-    { id: '#EAZ123453', status: 'Completed', date: '27 Sep, 2025', earnings: '$6.80', pickup: 'Eazika Fresh Mart', delivery: '321 Elm Ct' },
-];
-
-type Order = typeof orderHistory[0];
+type Order = { id: string; status: 'Completed' | 'Cancelled'; date: string; earnings: string; pickup: string; delivery: string };
 
 export default function DeliveryOrdersPage() {
     const [filter, setFilter] = useState<'Completed' | 'Cancelled'>('Completed');
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const load = async () => {
+            setLoading(true);
+            try {
+                const history = await fetchDeliveryHistory(1, 20);
+                const mapped: Order[] = history.orders.map(o => ({
+                    id: o.orderNumber || o.id,
+                    status: 'Completed',
+                    date: o.deliveredAt ? new Date(o.deliveredAt).toLocaleDateString() : '',
+                    earnings: o.pricing?.deliveryFee != null ? `₹${Number(o.pricing.deliveryFee).toFixed(2)}` : '₹0.00',
+                    pickup: typeof o.shop?.address === 'string' ? (o.shop?.address as string) : (o.shop?.name || ''),
+                    delivery: typeof o.deliveryInfo?.address === 'string' ? (o.deliveryInfo?.address as string) : (o.customer?.name || ''),
+                }));
+                setOrders(mapped);
+            } catch (e) {
+                console.error('Failed to fetch delivery history', e);
+            } finally {
+                setLoading(false);
+            }
+        };
+        load();
+    }, []);
 
     const filteredOrders = useMemo(() => {
-        return orderHistory.filter(order => order.status === filter);
-    }, [filter]);
+        return orders.filter(order => order.status === filter);
+    }, [filter, orders]);
 
     return (
         <>
@@ -37,7 +55,8 @@ export default function DeliveryOrdersPage() {
                 </div>
 
                 <div className="space-y-3">
-                    {filteredOrders.map((order, index) => (
+                    {loading && <p className="text-sm text-gray-500">Loading...</p>}
+                    {!loading && filteredOrders.map((order, index) => (
                         <motion.div
                             key={order.id}
                             initial={{ opacity: 0, y: 20 }}

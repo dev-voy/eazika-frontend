@@ -12,13 +12,13 @@ export default function DeliveryHomePage() {
   const { orders, acceptOrder, activeOrder } = useDeliveryStore();
   const router = useRouter();
 
-  const handleAcceptOrder = (orderId: string) => {
+  const handleAcceptOrder = async (orderId: string) => {
     if (activeOrder) {
       // In a real app, you might use a more user-friendly notification system like a toast.
       alert("Please complete your active order before accepting a new one.");
       return;
     }
-    if (acceptOrder(orderId)) {
+    if (await acceptOrder(orderId)) {
       router.push("/delivery/map"); // Redirect to map on successful accept
     }
   };

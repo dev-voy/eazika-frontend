@@ -125,17 +125,17 @@ export default function DeliveryMapPage() {
         )
     }
     
-    const handleMainActionClick = () => {
+    const handleMainActionClick = async () => {
         if (activeOrder.status === 'accepted') {
-            updateActiveOrderStatus('picked_up');
+            await updateActiveOrderStatus('picked_up');
         } else if (activeOrder.status === 'picked_up') {
-            updateActiveOrderStatus('awaiting_otp');
+            await updateActiveOrderStatus('awaiting_otp');
             setShowOtpModal(true);
         }
     };
 
-    const handleOtpConfirm = (otp: string) => {
-        if (confirmDeliveryWithOtp(otp)) {
+    const handleOtpConfirm = async (otp: string) => {
+        if (await confirmDeliveryWithOtp(otp)) {
             setShowOtpModal(false);
             router.push('/delivery/orders');
         } else {
@@ -143,8 +143,8 @@ export default function DeliveryMapPage() {
         }
     };
     
-    const handleCancel = () => {
-        updateActiveOrderStatus('cancelled');
+    const handleCancel = async () => {
+        await updateActiveOrderStatus('cancelled');
         setIsCancelling(false);
         router.push('/delivery/orders');
     };
