@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, use } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import MainLayout from '@/app/components/MainLayout';
@@ -11,6 +11,7 @@ import axios, { isAxiosError } from '@/lib/axios';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { updatePersistedUser } from '@/store/actions/userActions';
+import { toast } from 'sonner';
 
 export default function SettingsPage() {
     // User data — initialize from Redux store if available, otherwise fallback to mock
@@ -81,21 +82,28 @@ export default function SettingsPage() {
 
             if (selectedFile) {
                 const formData = new FormData();
-                formData.append('file', selectedFile);
+                formData.append('image', selectedFile);
+                console.log('Uploading file:', formData);
+                try {
+                    const imgResponse = await axios.post('upload-files', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                        params: {
+                            folder: 'image',
+                        },
+                    });
+                    uploadedImageUrl =
+                        imgResponse?.data?.data?.url ??
+                        imgResponse?.data?.data?.[0]?.url ??
+                        null;
+                    console.log('Image upload response:', imgResponse);
+                    toast.success(imgResponse?.data?.message || 'Image uploaded successfully');
+                } catch (error) {
+                    toast.error('Image upload failed. Please try again.');
+                }
 
-                const imgResponse = await axios.post('upload-files', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                    params: {
-                        folder: 'image',
-                    },
-                });
 
-                uploadedImageUrl =
-                    imgResponse?.data?.data?.url ??
-                    imgResponse?.data?.data?.[0]?.url ??
-                    null;
             }
 
             const nextProfileImage = uploadedImageUrl ?? userData.avatar;
@@ -106,7 +114,17 @@ export default function SettingsPage() {
                 phone: userData.phone,
                 profileImage: nextProfileImage,
             });
-
+            try {
+                const response = await axios.put('update-profile', {
+                    name: userData.name,
+                    email: userData.email,
+                    phone: userData.phone,
+                    avatar: nextProfileImage,
+                });
+                toast.success(response.data.message || 'Profile updated successfully');
+            } catch (error) {
+                toast.error('Failed to update profile. Please try again.');
+            }
             setUserData((prev) => ({
                 ...prev,
                 avatar: nextProfileImage,
