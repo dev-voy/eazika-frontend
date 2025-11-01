@@ -5,11 +5,10 @@ import { type NextRequest, NextResponse } from "next/server";
 const PUBLIC_ROUTES = ["/", "/home"];
 const AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
 
-const buildMatcherPattern =
-  "/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.json).*)";
-
 export const config = {
-  matcher: [buildMatcherPattern],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.json).*)",
+  ],
 };
 
 const isRouteMatch = (pathname: string, routes: string[]) => {

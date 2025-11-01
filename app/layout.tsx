@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "@/components/Providers";
 import "./globals.css";
@@ -86,12 +86,6 @@ export const metadata: Metadata = {
     type: "website",
     countryName: "India",
   },
-
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
   verification: {
     google: "your-google-site-verification",
     yandex: "your-yandex-verification",
@@ -99,6 +93,12 @@ export const metadata: Metadata = {
   },
   category: "technology",
   classification: "E-commerce, Shopping, Quick Commerce",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
