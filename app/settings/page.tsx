@@ -1,20 +1,21 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
 import Link from 'next/link';
 import Image from 'next/image';
 import MainLayout from '@/app/components/MainLayout';
 import { ArrowLeftIcon } from '@/app/components/Icons';
 import { motion } from 'framer-motion';
 import { Camera } from 'lucide-react';
-import axios from '@/lib/axios';
+import axios, { isAxiosError } from '@/lib/axios';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { updatePersistedUser } from '@/store/actions/userActions';
 
 export default function SettingsPage() {
     // User data — initialize from Redux store if available, otherwise fallback to mock
-    const userFromStore = useSelector((state: RootState) => state.user);
+    const userFromStore = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
 
     const [userData, setUserData] = useState(() => ({
         name: userFromStore?.name || 'Rafatul Islam',
@@ -38,6 +39,7 @@ export default function SettingsPage() {
 
     // State to hold the preview of the new avatar
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -72,40 +74,58 @@ export default function SettingsPage() {
     // Called when the form is submitted — prevent navigation and log the data
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (selectedFile) {
-            try {
-                const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        setIsSubmitting(true);
+
+        try {
+            let uploadedImageUrl: string | null = null;
+
+            if (selectedFile) {
                 const formData = new FormData();
                 formData.append('file', selectedFile);
 
-                const imgResponse = await axios.post(`upload-files`, formData, {
+                const imgResponse = await axios.post('upload-files', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
                     },
                     params: {
                         folder: 'image',
                     },
                 });
 
-                console.log('Selected avatar file:', imgResponse);
-
-            } catch (err: any) {
-                console.error('Upload failed:', err);
-                if (err?.response?.status === 401) {
-                    // Token expired or unauthorized — clear token and redirect to login
-                    if (typeof window !== 'undefined') {
-                        localStorage.removeItem('token');
-                    }
-                    router.push('/login');
-                } else {
-                    alert('Failed to upload avatar. Please try again.');
-                }
+                uploadedImageUrl =
+                    imgResponse?.data?.data?.url ??
+                    imgResponse?.data?.data?.[0]?.url ??
+                    null;
             }
-        } else {
-            console.log('No new avatar selected.');
+
+            const nextProfileImage = uploadedImageUrl ?? userData.avatar;
+
+            updatePersistedUser(dispatch, {
+                name: userData.name,
+                email: userData.email,
+                phone: userData.phone,
+                profileImage: nextProfileImage,
+            });
+
+            setUserData((prev) => ({
+                ...prev,
+                avatar: nextProfileImage,
+            }));
+
+            if (uploadedImageUrl) {
+                setAvatarPreview(null);
+                setSelectedFile(null);
+            }
+        } catch (err) {
+            console.error('Profile update failed:', err);
+            if (isAxiosError(err) && err.response?.status === 401) {
+                router.push('/login');
+                return;
+            }
+            alert('Failed to update profile. Please try again.');
+        } finally {
+            setIsSubmitting(false);
         }
-        console.log('No new avatar selected.');
     };
 
 
@@ -184,8 +204,12 @@ export default function SettingsPage() {
                                 />
                             </div>
                             <div className="pt-4">
-                                <button type="submit" className="w-full bg-gray-800 text-white font-bold py-4 rounded-full text-center hover:bg-gray-900 transition-colors">
-                                    Save Changes
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="w-full bg-gray-800 text-white font-bold py-4 rounded-full text-center hover:bg-gray-900 transition-colors disabled:cursor-not-allowed disabled:opacity-70"
+                                >
+                                    {isSubmitting ? 'Saving...' : 'Save Changes'}
                                 </button>
                             </div>
                         </form>

@@ -49,7 +49,9 @@ export default function CustomerRegisterPage() {
         return;
       }
 
-      const response = await axios.post("user/register", userData);
+      const response = await axios.post("user/register", userData, {
+        requiresAuth: false,
+      });
 
       if (response.status !== 201) {
         toast.warning(response.data.message);
@@ -64,7 +66,7 @@ export default function CustomerRegisterPage() {
         if (error.response)
           toast.error(
             error.response.data.message ||
-              "Registration failed. Please try again."
+            "Registration failed. Please try again."
           );
         else if (error.request)
           toast.error("No response from server. Please try again later.");
@@ -81,7 +83,7 @@ export default function CustomerRegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-yellow-50 via-white to-yellow-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <div className="mx-auto w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">

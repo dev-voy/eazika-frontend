@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 // import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
-import { useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import axios, { isAxiosError } from "@/lib/axios";
 import { Button } from "@/components/ui/button";
-import { addUserToRedux } from "@/store/actions/userActions";
+import { startUserSession } from "@/store/actions/userActions";
+import { useAppDispatch } from "@/store/hooks";
 
 export default function CustomerLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +18,7 @@ export default function CustomerLoginPage() {
   const [emailPhone, setEmailPhone] = useState("");
   const [password, setPassword] = useState("");
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
   // const searchParams = useSearchParams();
   // const redirect = searchParams.get("redirect") || "/profile";
@@ -28,19 +28,25 @@ export default function CustomerLoginPage() {
     try {
       e.preventDefault();
       setIsLoading(true);
-      const response = await axios.post("/user/login", {
-        emailPhone,
-        password,
-      });
+      const response = await axios.post(
+        "/user/login",
+        {
+          emailPhone,
+          password,
+        },
+        { requiresAuth: false }
+      );
       if (response.status !== 200) {
         toast.error("Login failed. Please try again.");
         return;
       }
-      addUserToRedux({
-        dispatch: dispatch,
+      startUserSession({
+        dispatch,
         user: response.data.data.user,
-        accessToken: response.data.data.accessToken,
-        refreshToken: response.data.data.refreshToken,
+        tokens: {
+          accessToken: response.data.data.accessToken,
+          refreshToken: response.data.data.refreshToken,
+        },
       });
 
       toast.success("Login successful");
@@ -61,7 +67,7 @@ export default function CustomerLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-yellow-50 via-white to-yellow-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <motion.div
           initial={{ opacity: 0, y: -20 }}

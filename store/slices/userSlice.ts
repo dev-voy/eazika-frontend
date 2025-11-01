@@ -1,7 +1,9 @@
+/** @format */
+
 import { userType } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState: userType = {
+export const userInitialState: userType = {
   id: "",
   name: "",
   email: "",
@@ -12,14 +14,16 @@ const initialState: userType = {
   isVerified: false,
 };
 
+const initialState: userType = { ...userInitialState };
+
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<userType>) => {
-      return { ...state, ...action.payload };
+    setUser: (_, action: PayloadAction<userType>) => {
+      return { ...userInitialState, ...action.payload };
     },
-    clearUser: () => initialState,
+    clearUser: () => ({ ...userInitialState }),
   },
 });
 

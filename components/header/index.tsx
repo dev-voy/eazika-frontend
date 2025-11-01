@@ -4,8 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
+import { useAppSelector } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
 import {
   Home,
@@ -55,7 +54,8 @@ function HeaderLayout({ children }: { children: React.ReactNode }) {
 }
 
 const Header = () => {
-  const { user, auth } = useSelector((state: RootState) => state);
+  const user = useAppSelector((state) => state.user);
+  const auth = useAppSelector((state) => state.auth);
   const pathname = usePathname();
   return (
     <header className="px-4 md:px-6 py-4 flex justify-between items-center bg-white sticky top-0 z-20 border-b">

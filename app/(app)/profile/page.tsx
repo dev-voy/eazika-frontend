@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -16,10 +16,9 @@ import {
   ChevronRight,
   Edit,
 } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { removeUserToRedux } from "@/store/actions/userActions";
+import { endUserSession } from "@/store/actions/userActions";
 
 // Reusable component for menu items
 const ProfileMenuItem = ({
@@ -87,18 +86,43 @@ const LogoutConfirmationModal = ({
 );
 
 export default function ProfilePage() {
-  const { user } = useSelector((state: RootState) => state);
+  const user = useAppSelector((state) => state.user);
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  const dispatch = useDispatch();
-  console.log(user)
+  const dispatch = useAppDispatch();
   const router = useRouter();
+
+  const initials = useMemo(() => {
+    if (!user?.name) {
+      return "U";
+    }
+
+    return user.name
+      .split(" ")
+      .filter(Boolean)
+      .map((segment) => segment[0]?.toUpperCase() ?? "")
+      .join("")
+      .slice(0, 2);
+  }, [user?.name]);
+
+  const shouldShowProfile = isAuthenticated && Boolean(user?.id);
 
   const handleLogout = () => {
     setShowLogoutConfirm(false);
-    removeUserToRedux(dispatch);
+    endUserSession(dispatch);
     router.push("/");
   };
+
+  if (!shouldShowProfile) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <p className="text-gray-500">Loading your profile...</p>
+      </div>
+    );
+  }
+
+  const avatarSrc = user.profileImage ?? undefined;
 
   const menuItems = [
     { icon: ShoppingBag, label: "My Orders", href: "/orders" },
@@ -127,13 +151,9 @@ export default function ProfilePage() {
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 rounded-full relative overflow-hidden border-2 border-white/50">
                   <Avatar className="h-full w-full">
-                    <AvatarImage src={user.profileImage!} alt={user.name} />
+                    <AvatarImage src={avatarSrc} alt={user.name} />
                     <AvatarFallback className="text-black text-2xl font-bold">
-                      {user.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                        .toUpperCase()}
+                      {initials}
                     </AvatarFallback>
                   </Avatar>
                 </div>

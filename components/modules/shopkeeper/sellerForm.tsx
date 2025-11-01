@@ -1,8 +1,6 @@
 "use client";
-import { RootState } from "@/store";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import axios, { isAxiosError } from "@/lib/axios";
+import { useAppSelector } from "@/store/hooks";
 
 const DAYS_OF_WEEK = [
   "monday",
@@ -41,7 +40,7 @@ const DAY_LABELS = {
 };
 
 export default function SellerForm() {
-  const { user } = useSelector((state: RootState) => state);
+  const user = useAppSelector((state) => state.user);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
