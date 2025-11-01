@@ -1,3 +1,5 @@
+/** @format */
+
 import { userType } from "@/types";
 import { AppDispatch } from "..";
 import { setUser, clearUser } from "@/store/slices/userSlice";
@@ -36,6 +38,8 @@ const addUserToRedux = (addUserToReduxParams: addUserToReduxParams) => {
   Cookies.set("accessToken", accessToken, { expires: 7, path: "*" });
   Cookies.set("refreshToken", refreshToken, { expires: 7, path: "*" });
 };
+console.log("addUserToRedux function defined");
+console.log(addUserToRedux);
 
 const removeUserToRedux = (dispatch: AppDispatch) => {
   Cookies.remove("accessToken", { path: "*" });

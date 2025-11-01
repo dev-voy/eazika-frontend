@@ -1,6 +1,9 @@
+/** @format */
+
 // "use server";
 import axios, { isAxiosError } from "axios";
 import Cookies from "js-cookie";
+import store from "@/store";
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1`,
@@ -11,8 +14,17 @@ const axiosInstance = axios.create({
 // Add interceptors for request and response
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = Cookies.get("accessToken") || null;
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    // Prefer token from Redux store (kept in memory) and fall back to cookie
+    const reduxToken = store.getState?.().auth?.accessToken || null;
+    const cookieToken = Cookies.get("accessToken") || null;
+    const token = reduxToken || cookieToken;
+    if (token) {
+      if (config.headers) {
+        (config.headers as any).Authorization = `Bearer ${token}`;
+      } else {
+        config.headers = { Authorization: `Bearer ${token}` } as any;
+      }
+    }
     return config;
   },
   (error) => Promise.reject(error)

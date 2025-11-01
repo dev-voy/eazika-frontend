@@ -91,7 +91,7 @@ export default function ProfilePage() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const dispatch = useDispatch();
-
+  console.log(user)
   const router = useRouter();
 
   const handleLogout = () => {
@@ -116,12 +116,12 @@ export default function ProfilePage() {
     <>
       {/* CORRECTED: Removed max-w-5xl and mx-auto to allow full width */}
       <div className="w-full bg-gray-50 min-h-screen">
-        <main className="flex-grow overflow-y-auto p-4 md:p-6 space-y-6">
+        <main className="overflow-y-auto p-4 md:p-6 space-y-6">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl p-6 text-white shadow-lg"
+            className=" from-yellow-400 to-orange-500 rounded-2xl p-6 text-white shadow-lg"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">

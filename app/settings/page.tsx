@@ -1,26 +1,48 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 import Link from 'next/link';
 import Image from 'next/image';
 import MainLayout from '@/app/components/MainLayout';
 import { ArrowLeftIcon } from '@/app/components/Icons';
 import { motion } from 'framer-motion';
 import { Camera } from 'lucide-react';
+import axios from '@/lib/axios';
+import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
-    // Mock user data, in a real app this would come from a user state/hook
-    const [userData, setUserData] = useState({
-        name: 'Rafatul Islam',
-        email: 'rafatul@eazika.com',
-        phone: '+880 1617202070',
-        avatar: '/assests/images/profile-pic.jpeg'
-    });
-    
+    // User data — initialize from Redux store if available, otherwise fallback to mock
+    const userFromStore = useSelector((state: RootState) => state.user);
+
+    const [userData, setUserData] = useState(() => ({
+        name: userFromStore?.name || 'Rafatul Islam',
+        email: userFromStore?.email || 'rafatul@eazika.com',
+        phone: userFromStore?.phone || '+880 1617202070',
+        avatar: userFromStore?.profileImage || '/assests/images/profile-pic.jpeg'
+    }));
+
+    // Keep form in sync if Redux user changes (for example when Providers seeds a default user)
+    useEffect(() => {
+        if (userFromStore && userFromStore.id) {
+            setUserData((prev) => ({
+                ...prev,
+                name: userFromStore.name || prev.name,
+                email: userFromStore.email || prev.email,
+                phone: userFromStore.phone || prev.phone,
+                avatar: userFromStore.profileImage || prev.avatar,
+            }));
+        }
+    }, [userFromStore]);
+
     // State to hold the preview of the new avatar
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-    // Ref to access the hidden file input element
+    const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Keep the actual selected File so we can log or upload it later
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -31,17 +53,59 @@ export default function SettingsPage() {
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            // keep a reference to the File object
+            setSelectedFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setAvatarPreview(reader.result as string);
             };
             reader.readAsDataURL(file);
         }
+
     };
-    
+
     // This function programmatically clicks the hidden file input
     const handleAvatarClick = () => {
         fileInputRef.current?.click();
+    };
+
+    // Called when the form is submitted — prevent navigation and log the data
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (selectedFile) {
+            try {
+                const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+
+                const imgResponse = await axios.post(`upload-files`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                    },
+                    params: {
+                        folder: 'image',
+                    },
+                });
+
+                console.log('Selected avatar file:', imgResponse);
+
+            } catch (err: any) {
+                console.error('Upload failed:', err);
+                if (err?.response?.status === 401) {
+                    // Token expired or unauthorized — clear token and redirect to login
+                    if (typeof window !== 'undefined') {
+                        localStorage.removeItem('token');
+                    }
+                    router.push('/login');
+                } else {
+                    alert('Failed to upload avatar. Please try again.');
+                }
+            }
+        } else {
+            console.log('No new avatar selected.');
+        }
+        console.log('No new avatar selected.');
     };
 
 
@@ -54,8 +118,8 @@ export default function SettingsPage() {
                     </Link>
                     <h1 className="text-2xl font-bold text-gray-800">Settings</h1>
                 </header>
-                <main className="flex-grow overflow-y-auto p-4 md:p-6">
-                    <motion.div 
+                <main className="grow overflow-y-auto p-4 md:p-6">
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 max-w-lg mx-auto"
@@ -64,10 +128,10 @@ export default function SettingsPage() {
                             <div className="relative mb-4">
                                 <div className="w-24 h-24 rounded-full relative overflow-hidden border-4 border-gray-100">
                                     {/* The Image now shows the preview, or falls back to the original avatar */}
-                                    <Image src={avatarPreview || userData.avatar} alt="User Avatar" fill className="object-cover"/>
+                                    <Image src={avatarPreview || userData.avatar} alt="User Avatar" fill className="object-cover" />
                                 </div>
                                 {/* This is the visible button that triggers the file input */}
-                                <button 
+                                <button
                                     onClick={handleAvatarClick}
                                     className="absolute bottom-0 right-0 p-2 bg-yellow-400 rounded-full text-gray-800 hover:bg-yellow-500 transition-colors border-2 border-white"
                                     aria-label="Change profile picture"
@@ -75,7 +139,7 @@ export default function SettingsPage() {
                                     <Camera className="w-4 h-4" />
                                 </button>
                                 {/* This is the actual file input, but it's hidden from view */}
-                                <input 
+                                <input
                                     type="file"
                                     ref={fileInputRef}
                                     onChange={handleAvatarChange}
@@ -85,7 +149,7 @@ export default function SettingsPage() {
                             </div>
                         </div>
 
-                        <form className="space-y-4">
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label htmlFor="name" className="text-sm font-medium text-gray-700">Full Name</label>
                                 <input
@@ -97,7 +161,7 @@ export default function SettingsPage() {
                                     className="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-xl shadow-sm py-3 px-4 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
                                 />
                             </div>
-                             <div>
+                            <div>
                                 <label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address</label>
                                 <input
                                     id="email"
@@ -108,7 +172,7 @@ export default function SettingsPage() {
                                     className="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-xl shadow-sm py-3 px-4 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
                                 />
                             </div>
-                             <div>
+                            <div>
                                 <label htmlFor="phone" className="text-sm font-medium text-gray-700">Mobile Number</label>
                                 <input
                                     id="phone"

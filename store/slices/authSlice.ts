@@ -1,3 +1,5 @@
+/** @format */
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
@@ -29,6 +31,7 @@ const authSlice = createSlice({
     },
   },
 });
+// console.log("Auth Slice Loaded");
 
 export const { setToken, clearToken } = authSlice.actions;
 export default authSlice.reducer;
